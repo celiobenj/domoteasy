@@ -3,15 +3,15 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
     button: {
         width: "100%",
-        height: 52,
-        backgroundColor: "#310de3ff",
-        borderRadius: 10,
+        height: 54,
+        backgroundColor: "#4A4E69",
+        borderRadius: 16,
         justifyContent: "center",
         alignItems: "center",
     },
     title: {
         fontSize: 16,
-        fontWeight: "bold",
-        color: "white"
+        color: "#F2E9E4",
+        fontFamily: "Roboto_700Bold"
     }
 })
