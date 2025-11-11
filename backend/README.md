@@ -11,7 +11,7 @@
   res (erro) = {"erro": "Email ou senha inválidos."}
   > verifica se existe o email. se existe, verifica se a senha bate. se bater, responde com um token de acesso (JWT).
 
-### Rotas de Gerenciamento de Perfil (/usuario) (Requer Header: "Authorization: Bearer <token>")
+### Rotas de Gerenciamento de Perfil (/usuario) (Requer Header: "Authorization: Bearer \<token>\")
   #### p/ atualizar dados: PATCH /usuario/atualizar:
   req = {"dados": {"senha": "nova_senha_123"}} <br>
   res = {"id": 1, "nome": "fulano", "email": "algum@email.com", "tipoAssinatura": "Comum"} <br>
