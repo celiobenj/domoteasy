@@ -1,44 +1,36 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { Button } from '@/components/button'
 import { ProfilePhoto } from "@/components/profilePhoto";
-import { TouchableOpacity } from 'react-native';
+import { Input } from '@/components/input';
 
-var name = "Célio Benjamim"
-
-const Home = () => {
+const EditProfile = () => {
     return (
         <View style={styles.page}>
             <View style={styles.top}>
                 <View style={styles.header}>
-                    {/* <MaterialCommunityIcons
-                        name={"menu"}
+                    <MaterialCommunityIcons
+                        name={"arrow-left"}
                         size={48}
                         color={"#4A4E69"}
-                    /> */}
-                    <Text style={styles.title}>Home</Text>
-                    <ProfilePhoto size={48} />
-                </View>
-                <View style={styles.greetings}>
-                    <Text style={styles.text_bold}>Olá, {name}</Text>
+                        onPress={() => router.back()}
+                    />
+                    <Text style={styles.title}>Editar Perfil</Text>
+                    <View style={{ width: 48 }} ></View>
                 </View>
             </View>
+            <View style={styles.body}>
+                <Input/>
+            </View>
             <View style={styles.footer}>
-                <TouchableOpacity activeOpacity={0.9} onPress={() => router.navigate("./home")}>
-                    <MaterialCommunityIcons
-                        name={"home"}
-                        size={48}
-                        color={"#4A4E69"}
-                    />
-                </TouchableOpacity>
                 <ProfilePhoto size={48} />
             </View>
         </View>
     )
 }
 
-export default Home
+export default EditProfile
 
 const styles = StyleSheet.create({
     text: {
@@ -98,5 +90,8 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
         gap: 10,
         alignSelf: "stretch"
+    },
+    body: {
+        
     }
 })
