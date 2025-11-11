@@ -1,4 +1,4 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, ScrollView } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, ScrollView, Alert } from 'react-native'
 import { router } from 'expo-router'
 import { Checkbox } from 'expo-checkbox';
 import { useState } from 'react';
@@ -6,9 +6,48 @@ import { useState } from 'react';
 import Logo_hor from '@/assets/Logo/Logo-hor'
 import { Button } from '@/components/button'
 import { InputTitle } from '@/components/inputTitle'
+import { authService, SignUpData } from '@/services/authService'
 
 const Cadastro = () => {
     const [isChecked, setChecked] = useState(false);
+    const [formData, setFormData] = useState<SignUpData>({
+        nome: '',
+        email: '',
+        senha: '',
+    });
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleInputChange = (field: keyof SignUpData, value: string) => {
+        setFormData((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
+    const handleSignUp = async () => {
+        if (!formData.nome || !formData.email || !formData.senha || !confirmPassword) {
+            Alert.alert('Erro', 'Por favor, preencha todos os campos');
+            return;
+        }
+
+        if (formData.senha !== confirmPassword) {
+            Alert.alert('Erro', 'As senhas não conferem');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const response = await authService.signUp(formData);
+            await authService.saveToken(response.token);
+            Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+            router.navigate('./home');
+        } catch (error: any) {
+            Alert.alert('Erro', error.response?.data?.erro || 'Erro ao cadastrar');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height" } keyboardVerticalOffset={-150} style={styles.container}>
@@ -20,15 +59,45 @@ const Cadastro = () => {
                 </View>
 
                 <View style={styles.body} >
-                    <InputTitle title='Nome' icon='account' placeholder='Digite seu nome' />
-                    <InputTitle title='E-mail' icon='email' placeholder='exemplo@email.com' />
-                    <InputTitle title='Senha' icon='lock' isPsw={true} placeholder='Digite sua senha' />
-                    <InputTitle title='Confirme sua senha' isPsw={true} icon='lock' placeholder='Digite sua senha novamente' />
+                    <InputTitle 
+                        title='Nome' 
+                        icon='account' 
+                        placeholder='Digite seu nome'
+                        value={formData.nome}
+                        onChangeText={(text) => handleInputChange('nome', text)}
+                    />
+                    <InputTitle 
+                        title='E-mail' 
+                        icon='email' 
+                        placeholder='exemplo@email.com'
+                        value={formData.email}
+                        onChangeText={(text) => handleInputChange('email', text)}
+                    />
+                    <InputTitle 
+                        title='Senha' 
+                        icon='lock' 
+                        isPsw={true} 
+                        placeholder='Digite sua senha'
+                        value={formData.senha}
+                        onChangeText={(text) => handleInputChange('senha', text)}
+                    />
+                    <InputTitle 
+                        title='Confirme sua senha' 
+                        isPsw={true} 
+                        icon='lock' 
+                        placeholder='Digite sua senha novamente'
+                        value={confirmPassword}
+                        onChangeText={setConfirmPassword}
+                    />
                     <View style={styles.check_section}>
                         <Checkbox color={"#4A4E69"} style={styles.checkbox} value={isChecked} onValueChange={setChecked} />
                         <Text style={styles.text}>Permanecer conectado?</Text>
                     </View>
-                    <Button title='Fazer Cadastro' onPress={() => router.navigate("./home")} />
+                    <Button 
+                        title={loading ? 'Cadastrando...' : 'Fazer Cadastro'} 
+                        onPress={handleSignUp}
+                        disabled={loading}
+                    />
                 </View>
 
                 <View style={styles.footer}>
