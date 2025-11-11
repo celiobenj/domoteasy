@@ -8,5 +8,6 @@ const ctrlUsuario = new CtrlUsuario;
 userRouter.post('/cadastro', ctrlUsuario.cadastro)
 userRouter.post('/login', ctrlUsuario.login)
 userRouter.patch('/atualizar', verificarToken, ctrlUsuario.atualizarDados)
+userRouter.get('/info', verificarToken, ctrlUsuario.obterInformacoes)
 
 export default userRouter

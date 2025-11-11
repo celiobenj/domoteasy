@@ -95,6 +95,27 @@ class CtrlUsuario {
         }
 
     }
+
+    async obterInformacoes(req, res) {
+        const id = req.usuario.id;
+        const db = await openDb();
+
+        try {
+            const usuario = await db.get(
+                'SELECT nome, email, tipoAssinatura FROM usuarios WHERE id = ?',
+                [id]
+            );
+
+            if (!usuario) {
+                return res.status(404).json({ erro: "Este usuário não existe" });
+            }
+
+            res.status(200).json(usuario);
+        }
+        catch (error) {
+            res.status(500).json({ erro: "Erro ao obter informações"});
+        }
+    }
 }
 
 async function registrarUsuario(db, nome, email, senha) {
