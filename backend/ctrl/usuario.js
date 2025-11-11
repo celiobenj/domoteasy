@@ -84,7 +84,7 @@ class CtrlUsuario {
             }
 
             const usuarioPosMod = await db.get(
-                'SELECT id, nome, email, tipoAssinatura FROM usuarios WHERE id = ?',
+                'SELECT nome, email, tipoAssinatura FROM usuarios WHERE id = ?',
                 [id]
             );
 
