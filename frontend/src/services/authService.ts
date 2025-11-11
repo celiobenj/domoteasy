@@ -1,4 +1,3 @@
-import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface SignUpData {
@@ -14,25 +13,27 @@ export interface LoginData {
 
 export interface AuthResponse {
   token: string;
-  id: string;
 }
 
 export const authService = {
   async signUp(data: SignUpData): Promise<AuthResponse> {
-    const response = await api.post('/usuario/cadastro', {
-      nome: data.nome,
-      email: data.email,
-      senha: data.senha,
+    const response = await fetch('http://localhost:3000/usuario/cadastro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
-    return response.data;
+    const result = await response.json();
+    return result;
   },
 
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await api.post('/usuario/login', {
-      email: data.email,
-      senha: data.senha,
+    const response = await fetch('http://localhost:3000/usuario/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
-    return response.data;
+    const result = await response.json();
+    return result;
   },
 
   async saveToken(token: string): Promise<void> {
