@@ -1,31 +1,7 @@
-import { open } from 'sqlite';
-import sqlite3 from 'sqlite3';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { openDb } from '../db/configdb.js'
 // import Usuario from '../entidades/usuario.js';
-
-const dbPath = './db/domot.db';
-
-async function openDb() {
-    return open({
-        filename: dbPath,
-        driver: sqlite3.Database
-    });
-}
-
-async function setupDatabase() {
-    const db = await openDb();
-    await db.exec(`
-        CREATE TABLE IF NOT EXISTS usuarios (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            email TEXT NOT NULL UNIQUE,
-            senhaHash TEXT NOT NULL,
-            tipoAssinatura TEXT NOT NULL
-        )
-    `);
-}
-setupDatabase();
 
 class CtrlUsuario {
 
