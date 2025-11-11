@@ -12,7 +12,7 @@ const Entrar = () => {
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height" } keyboardVerticalOffset={-150} style={styles.container}>
-            <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.svcontainer} >
+            <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.svcontainer} keyboardShouldPersistTaps="handled" >
 
                 <View style={styles.header}>
                     <View style={styles.logo}><Logo_hor onPress={() => router.navigate("./")} /></View>
@@ -23,7 +23,7 @@ const Entrar = () => {
                     <InputTitle title='E-mail' icon='email' placeholder='exemplo@email.com' />
                     <InputTitle title='Senha' icon='lock' isPsw={true} size={24} placeholder='exemplo@email.com' />
                     <View style={styles.check_section}>
-                        <Checkbox style={styles.checkbox} value={isChecked} onValueChange={setChecked} />
+                        <Checkbox color={"#4A4E69"} style={styles.checkbox} value={isChecked} onValueChange={setChecked} />
                         <Text style={styles.text}>Permanecer conectado?</Text>
                     </View>
                     <Button title='Entrar' onPress={() => router.navigate("./home")} />
@@ -94,8 +94,8 @@ const styles = StyleSheet.create({
     },
     checkbox: {
         borderRadius: 4,
-        width: 16,
-        height: 16
+        width: 20,
+        height: 20
     },
     check_section: {
         gap: 8,

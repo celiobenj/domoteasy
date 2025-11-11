@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { useFonts } from 'expo-font'
-import { Roboto_400Regular, Roboto_600SemiBold, Roboto_700Bold } from "@expo-google-fonts/roboto";
+import { Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto";
+import { Arvo_400Regular, Arvo_700Bold } from '@expo-google-fonts/arvo';
 import Logo_hor from '@/assets/Logo/Logo-hor'
 import { Button } from '@/components/button';
 import { router } from 'expo-router';
@@ -8,8 +9,9 @@ import { router } from 'expo-router';
 const Index = () => {
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
-    Roboto_600SemiBold,
-    Roboto_700Bold
+    Roboto_700Bold,
+    Arvo_400Regular, 
+    Arvo_700Bold
   });
 
   function bold(text: string) {
