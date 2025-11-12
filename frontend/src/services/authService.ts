@@ -13,6 +13,13 @@ export interface LoginData {
 
 export interface AuthResponse {
   token: string;
+  id?: string;
+  erro?: string;
+}
+
+export interface ApiError {
+  status: number;
+  message: string;
 }
 
 export const authService = {
@@ -22,7 +29,22 @@ export const authService = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
+
     const result = await response.json();
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        throw {
+          status: 409,
+          message: "Este email já está cadastrado"
+        };
+      }
+      throw {
+        status: response.status,
+        message: result.erro || "Erro ao fazer cadastro"
+      };
+    }
+
     return result;
   },
 
@@ -32,7 +54,22 @@ export const authService = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
+
     const result = await response.json();
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw {
+          status: 401,
+          message: "Email ou senha inválidos"
+        };
+      }
+      throw {
+        status: response.status,
+        message: result.erro || "Erro ao fazer login"
+      };
+    }
+
     return result;
   },
 

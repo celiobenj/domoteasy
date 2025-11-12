@@ -1,12 +1,15 @@
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, ScrollView, Alert } from 'react-native'
-import { router } from 'expo-router'
 import { Checkbox } from 'expo-checkbox';
+import { router } from 'expo-router';
 import { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import Logo_hor from '@/assets/Logo/Logo-hor'
-import { Button } from '@/components/button'
-import { InputTitle } from '@/components/inputTitle'
-import { authService, LoginData } from '@/services/authService'
+import Logo_hor from '@/assets/Logo/Logo-hor';
+import { Button } from '@/components/button';
+import { ErrorMessage } from '@/components/errorMessage';
+import { InputTitle } from '@/components/inputTitle';
+import { SuccessCard } from '@/components/successCard';
+import { authService, LoginData } from '@/services/authService';
+import { validateLogin, ValidationError } from '@/utils/validation';
 
 const Entrar = () => {
     const [isChecked, setChecked] = useState(false);
@@ -15,17 +18,34 @@ const Entrar = () => {
         senha: '',
     });
     const [loading, setLoading] = useState(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleInputChange = (field: keyof LoginData, value: string) => {
         setFormData((prev) => ({
             ...prev,
             [field]: value,
         }));
+        // Limpar erro do campo ao começar a digitar
+        if (errors[field]) {
+            setErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors[field];
+                return newErrors;
+            });
+        }
     };
 
     const handleLogin = async () => {
-        if (!formData.email || !formData.senha) {
-            Alert.alert('Erro', 'Por favor, preencha todos os campos');
+        // Validar formulário
+        const validation = validateLogin(formData.email, formData.senha);
+
+        if (!validation.isValid) {
+            const errorMap: Record<string, string> = {};
+            validation.errors.forEach((error: ValidationError) => {
+                errorMap[error.field] = error.message;
+            });
+            setErrors(errorMap);
             return;
         }
 
@@ -33,10 +53,15 @@ const Entrar = () => {
         try {
             const response = await authService.login(formData);
             await authService.saveToken(response.token);
-            Alert.alert('Sucesso', 'Login realizado com sucesso!');
-            router.navigate('./home');
+            
+            setShowSuccess(true);
+            setTimeout(() => {
+                router.navigate('./home');
+            }, 2000);
         } catch (error: any) {
-            Alert.alert('Erro', error.response?.data?.erro || 'Erro ao fazer login');
+            setErrors({
+                submit: error.message || 'Erro ao fazer login'
+            });
         } finally {
             setLoading(false);
         }
@@ -44,6 +69,11 @@ const Entrar = () => {
 
     return (
         <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height" } keyboardVerticalOffset={-150} style={styles.container}>
+            <SuccessCard 
+                visible={showSuccess} 
+                message="Login realizado com sucesso!"
+                onHide={() => setShowSuccess(false)}
+            />
             <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.svcontainer} keyboardShouldPersistTaps="handled" >
 
                 <View style={styles.header}>
@@ -52,6 +82,11 @@ const Entrar = () => {
                 </View>
 
                 <View style={styles.body} >
+                    <ErrorMessage 
+                        message={errors.submit}
+                        visible={!!errors.submit}
+                    />
+                    
                     <InputTitle 
                         title='E-mail' 
                         icon='email' 
@@ -59,6 +94,8 @@ const Entrar = () => {
                         value={formData.email}
                         onChangeText={(text) => handleInputChange('email', text)}
                     />
+                    {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+                    
                     <InputTitle 
                         title='Senha' 
                         icon='lock' 
@@ -68,6 +105,8 @@ const Entrar = () => {
                         value={formData.senha}
                         onChangeText={(text) => handleInputChange('senha', text)}
                     />
+                    {errors.senha && <Text style={styles.errorText}>{errors.senha}</Text>}
+                    
                     <View style={styles.check_section}>
                         <Checkbox color={"#4A4E69"} style={styles.checkbox} value={isChecked} onValueChange={setChecked} />
                         <Text style={styles.text}>Permanecer conectado?</Text>
@@ -152,5 +191,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center"
     },
+    errorText: {
+        color: "#F44336",
+        fontSize: 12,
+        fontFamily: "Roboto_400Regular",
+        marginTop: -20,
+        marginBottom: 8
+    }
 
 })
