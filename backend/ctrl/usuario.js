@@ -43,8 +43,8 @@ class CtrlUsuario {
                 return res.status(401).json({ erro: "Email inválido." });
             }
 
-            if (!senhaValida) {
             const senhaValida = await compararSenha(senha, usuario.senhaHash);
+            if (!senhaValida) {
 
                 return res.status(401).json({ erro: "Senha inválida." });
             }
