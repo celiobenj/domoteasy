@@ -44,6 +44,7 @@ const EditProfile = () => {
                     <InputTitle title='Nova senha' icon='lock' isPsw={true} placeholder='Digite sua nova senha' />
                     <InputTitle title='Confirme sua senha' isPsw={true} icon='lock' placeholder='Digite sua senha novamente' />
                     <Button title='Atualizar Cadastro' onPress={handleUpdateProfile} />
+                    <Button title='Sair da Conta' onPress={() => router.navigate("./")} />
                 </View>
                 <View style={styles.footer}>
                     <TouchableOpacity activeOpacity={0.9} onPress={() => router.navigate("./home")}>
