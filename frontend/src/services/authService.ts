@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from './api';
 
 export interface SignUpData {
   nome: string;
@@ -24,53 +25,43 @@ export interface ApiError {
 
 export const authService = {
   async signUp(data: SignUpData): Promise<AuthResponse> {
-    const response = await fetch('http://localhost:3000/usuario/cadastro', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      if (response.status === 409) {
+    try {
+      const response = await api.post('/usuario/cadastro', data);
+      return response.data as AuthResponse;
+    } catch (err: any) {
+      if (err.response) {
+        const status = err.response.status;
+        const result = err.response.data || {};
+        if (status === 409) {
+          throw {
+            status: 409,
+            message: 'Este email já está cadastrado'
+          } as ApiError;
+        }
         throw {
-          status: 409,
-          message: "Este email já está cadastrado"
-        };
+          status,
+          message: result.erro || 'Erro ao fazer cadastro'
+        } as ApiError;
       }
-      throw {
-        status: response.status,
-        message: result.erro || "Erro ao fazer cadastro"
-      };
+      throw { status: 0, message: 'Erro de conexão' } as ApiError;
     }
-
-    return result;
   },
 
   async login(data: LoginData): Promise<AuthResponse> {
-    const response = await fetch('http://localhost:3000/usuario/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw {
-          status: 401,
-          message: "Email ou senha inválidos"
-        };
+    try {
+      const response = await api.post('/usuario/login', data);
+      return response.data as AuthResponse;
+    } catch (err: any) {
+      if (err.response) {
+        const status = err.response.status;
+        const result = err.response.data || {};
+        if (status === 401) {
+          throw { status: 401, message: 'Email ou senha inválidos' } as ApiError;
+        }
+        throw { status, message: result.erro || 'Erro ao fazer login' } as ApiError;
       }
-      throw {
-        status: response.status,
-        message: result.erro || "Erro ao fazer login"
-      };
+      throw { status: 0, message: 'Erro de conexão' } as ApiError;
     }
-
-    return result;
   },
 
   async saveToken(token: string): Promise<void> {
