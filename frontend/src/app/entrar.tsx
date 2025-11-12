@@ -57,7 +57,7 @@ const Entrar = () => {
             setShowSuccess(true);
             setTimeout(() => {
                 router.navigate('./home');
-            }, 2000);
+            }, 1000);
         } catch (error: any) {
             setErrors({
                 submit: error.message || 'Erro ao fazer login'
