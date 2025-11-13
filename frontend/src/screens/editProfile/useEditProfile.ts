@@ -12,6 +12,7 @@ export const useEditProfile = () => {
 
     const [loading, setLoading] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     // Limpa erros ao digitar
@@ -102,6 +103,8 @@ export const useEditProfile = () => {
         showSuccess,
         errors,
         setShowSuccess,
+        showPassword,
+        setShowPassword,
 
         // Actions
         clearError,

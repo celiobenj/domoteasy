@@ -26,6 +26,8 @@ const SignUpScreen = () => {
         errors,
         showSuccess,
         setShowSuccess,
+        showPassword,
+        setShowPassword,
         clearError,
         handleSignUp,
         handleNavigateToSignIn,
@@ -106,6 +108,8 @@ const SignUpScreen = () => {
                             isPsw={true}
                             placeholder='Min. 8 caracteres, letra e número'
                             value={password}
+                            showPassword={showPassword}
+                            onTogglePassword={() => setShowPassword(!showPassword)}
                             onChangeText={(text) => {
                                 setPassword(text);
                                 clearError('senha');
@@ -127,6 +131,8 @@ const SignUpScreen = () => {
                             icon='lock'
                             placeholder='Digite sua senha novamente'
                             value={confirmPassword}
+                            showPassword={showPassword}
+                            onTogglePassword={() => setShowPassword(!showPassword)}
                             onChangeText={(text) => {
                                 setConfirmPassword(text);
                                 clearError('confirmaSenha');

@@ -87,11 +87,11 @@ const SignInScreen = () => {
                             value={formData.senha}
                             onChangeText={(text) => handleInputChange('senha', text)}
                         />
-                        {passwordValidation && (
+                        {/* {passwordValidation && (
                             <Text style={styles.validationText}>
                                 {passwordValidation.message}
                             </Text>
-                        )}
+                        )} */}
                         {errors.senha && <Text style={styles.errorText}>{errors.senha}</Text>}
                     </View>
 

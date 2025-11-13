@@ -15,6 +15,7 @@ export const useSignUp = () => {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     // Acessa o contexto de autenticação
     const { setUserName } = useAuth();
@@ -106,6 +107,8 @@ export const useSignUp = () => {
         errors,
         showSuccess,
         setShowSuccess,
+        showPassword,
+        setShowPassword,
 
         // Actions
         clearError,

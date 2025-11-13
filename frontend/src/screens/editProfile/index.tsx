@@ -29,6 +29,8 @@ const EditProfileScreen = () => {
         showSuccess,
         errors,
         setShowSuccess,
+        showPassword,
+        setShowPassword,
         clearError,
         handleUpdateProfile,
         handleLogout,
@@ -81,6 +83,8 @@ const EditProfileScreen = () => {
                             isPsw={true}
                             placeholder='Digite sua senha atual'
                             value={currentPassword}
+                            showPassword={showPassword}
+                            onTogglePassword={() => setShowPassword(!showPassword)}
                             onChangeText={(text) => {
                                 setCurrentPassword(text);
                                 clearError('currentPassword');
@@ -97,6 +101,8 @@ const EditProfileScreen = () => {
                             isPsw={true}
                             placeholder='Digite sua nova senha'
                             value={newPassword}
+                            showPassword={showPassword}
+                            onTogglePassword={() => setShowPassword(!showPassword)}
                             onChangeText={(text) => {
                                 setNewPassword(text);
                                 clearError('newPassword');
@@ -118,6 +124,8 @@ const EditProfileScreen = () => {
                             icon='lock'
                             placeholder='Digite sua senha novamente'
                             value={confirmPassword}
+                            showPassword={showPassword}
+                            onTogglePassword={() => setShowPassword(!showPassword)}
                             onChangeText={(text) => {
                                 setConfirmPassword(text);
                                 clearError('confirmPassword');

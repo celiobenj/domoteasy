@@ -9,10 +9,23 @@ export type InputProps = TextInputProps & {
     size?: number
     color?: string
     isPsw?: boolean
+    showPassword?: boolean
+    onTogglePassword?: () => void
 }
 
-export function Input({ icon, size, color, isPsw, ...rest }: InputProps) {
-    const [secure, setSecure] = useState(isPsw);
+export function Input({ icon, size, color, isPsw, showPassword, onTogglePassword, ...rest }: InputProps) {
+    // Se showPassword for fornecido (prop controlada), usar ele; caso contrário, usar estado local
+    const [localSecure, setLocalSecure] = useState(isPsw);
+    const isControlled = showPassword !== undefined;
+    const secure = isControlled ? !showPassword : localSecure;
+
+    const handleToggle = () => {
+        if (isControlled && onTogglePassword) {
+            onTogglePassword();
+        } else {
+            setLocalSecure((s) => !s);
+        }
+    };
 
     return (
         <View style={[styles.container, { position: "relative" }]}>
@@ -34,7 +47,7 @@ export function Input({ icon, size, color, isPsw, ...rest }: InputProps) {
             {isPsw && (
                 <TouchableOpacity
                     activeOpacity={0.8}
-                    onPress={() => setSecure((s) => !s)}
+                    onPress={handleToggle}
                     style={{ position: "absolute", right: 12, top: 14 }}
                 >
                     <MaterialCommunityIcons
