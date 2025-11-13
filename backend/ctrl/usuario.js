@@ -66,7 +66,7 @@ class CtrlUsuario {
 
     async atualizarDados(req, res){
         const id = req.usuario.id;
-        const { dados } = req.body;
+        const { senhaAtual, novaSenha } = req.body;
         const db = await openDb();
 
         try {
@@ -79,8 +79,19 @@ class CtrlUsuario {
                 return res.status(409).json({ erro: "Este usuário não existe" });
             }
 
-            if (dados.senha) {
-                const senhaHash = await hashearSenha(dados.senha);
+            // Validar senha atual
+            if (!senhaAtual) {
+                return res.status(400).json({ erro: "Senha atual é obrigatória" });
+            }
+
+            const senhaAtualValida = await compararSenha(senhaAtual, usuarioPreMod.senhaHash);
+            if (!senhaAtualValida) {
+                return res.status(401).json({ erro: "Senha atual inválida" });
+            }
+
+            // Validar e atualizar nova senha
+            if (novaSenha) {
+                const senhaHash = await hashearSenha(novaSenha);
                 await db.run(
                     'UPDATE usuarios SET senhaHash = ? WHERE id = ?',
                     [senhaHash, id]
@@ -118,6 +129,27 @@ class CtrlUsuario {
         }
         catch (error) {
             res.status(500).json({ erro: "Erro ao obter informações"});
+        }
+    }
+
+    async obterNome(req, res) {
+        const id = req.usuario.id;
+        const db = await openDb();
+
+        try {
+            const usuario = await db.get(
+                'SELECT nome FROM usuarios WHERE id = ?',
+                [id]
+            );
+
+            if (!usuario) {
+                return res.status(404).json({ erro: "Este usuário não existe" });
+            }
+
+            res.status(200).json({ nome: usuario.nome });
+        }
+        catch (error) {
+            res.status(500).json({ erro: "Erro ao obter nome"});
         }
     }
 }

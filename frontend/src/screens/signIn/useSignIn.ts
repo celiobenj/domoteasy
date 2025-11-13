@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { authService, LoginData } from '@/services/authService';
 import { validateLogin, ValidationError } from '@/utils/validation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useSignIn = () => {
     // Estados (Renomeados para inglês)
@@ -13,6 +14,9 @@ export const useSignIn = () => {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [showSuccess, setShowSuccess] = useState(false);
+
+    // Acessa o contexto de autenticação
+    const { setUserName } = useAuth();
 
     // Handlers
     const handleInputChange = (field: keyof LoginData, value: string) => {
@@ -49,6 +53,15 @@ export const useSignIn = () => {
         try {
             const response = await authService.login(formData);
             await authService.saveToken(response.token);
+
+            // Busca o nome do usuário após login bem-sucedido
+            try {
+                const userName = await authService.getUserName();
+                await authService.saveUserName(userName);
+                setUserName(userName);
+            } catch (err) {
+                console.error('Erro ao buscar nome do usuário:', err);
+            }
 
             // Lógica de "Permanecer conectado" poderia ser salva aqui também
 

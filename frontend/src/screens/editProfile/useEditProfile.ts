@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { Alert } from 'react-native';
+import api from '../../services/api';
 
 export const useEditProfile = () => {
     // Estados para os campos de senha
@@ -40,22 +41,28 @@ export const useEditProfile = () => {
 
         setLoading(true);
 
-        // 2. Simulação de chamada de API (substituir por chamada real no futuro)
         try {
-            // await api.updateProfile({ ... });
-
-            // Simula delay de rede
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Fazer a chamada real à API
+            await api.patch('/usuario/atualizar', {
+                senhaAtual: currentPassword,
+                novaSenha: newPassword
+            });
 
             setShowSuccess(true);
+
+            // Limpar os campos
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
 
             setTimeout(() => {
                 // Volta para a Home após sucesso
                 router.navigate('/home');
             }, 1500);
 
-        } catch (error) {
-            Alert.alert("Erro", "Não foi possível atualizar o perfil.");
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.erro || "Não foi possível atualizar o perfil.";
+            Alert.alert("Erro", errorMessage);
         } finally {
             setLoading(false);
         }

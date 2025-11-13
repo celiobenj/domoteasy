@@ -106,7 +106,16 @@ export const authService = {
     return await AsyncStorage.getItem('authToken');
   },
 
+  async saveUserName(userName: string): Promise<void> {
+    await AsyncStorage.setItem('userName', userName);
+  },
+
+  async getUserNameFromStorage(): Promise<string | null> {
+    return await AsyncStorage.getItem('userName');
+  },
+
   async logout(): Promise<void> {
     await AsyncStorage.removeItem('authToken');
+    await AsyncStorage.removeItem('userName');
   },
 };

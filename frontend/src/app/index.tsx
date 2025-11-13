@@ -7,10 +7,12 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/
 import { Arvo_400Regular, Arvo_700Bold } from '@expo-google-fonts/arvo';
 
 // Importe seu serviço de autenticação (ajuste o caminho se necessário)
-// import { authService } from '../services/authService';
+import { authService } from '@/services/authService';
+import { useAuth } from '@/contexts/AuthContext';
 
 const AppEntry = () => {
     const router = useRouter();
+    const { loadUserData } = useAuth();
 
     const [fontsLoaded] = useFonts({
         Roboto_400Regular,
@@ -24,11 +26,11 @@ const AppEntry = () => {
             const checkAuth = async () => {
                 try {
                     // 3. Lógica de verificação de autenticação
-                    // (Descomente e ajuste seu authService quando for implementar)
-                    // const token = await authService.getToken(); 
-                    const token = null; // Simule estar deslogado por enquanto
+                    const token = await authService.getToken();
 
                     if (token) {
+                        // Carrega dados do usuário se houver token
+                        await loadUserData();
                         // Se logado, manda para a home
                         router.replace('./home');
                     } else {

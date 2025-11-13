@@ -9,5 +9,6 @@ userRouter.post('/cadastro', ctrlUsuario.cadastro)
 userRouter.post('/login', ctrlUsuario.login)
 userRouter.patch('/atualizar', verificarToken, ctrlUsuario.atualizarDados)
 userRouter.get('/info', verificarToken, ctrlUsuario.obterInformacoes)
+userRouter.get('/nome', verificarToken, ctrlUsuario.obterNome)
 
 export default userRouter

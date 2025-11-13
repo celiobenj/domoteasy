@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { BackHandler, Alert } from 'react-native';
+import { useAuth } from '@/contexts/AuthContext';
+import { authService } from '@/services/authService';
 
 export const useHome = () => {
-    // Simulação de dados (no futuro virá do contexto/API)
-    const [userName, setUserName] = useState("Célio Benjamim");
+    const { userName, clearUserName } = useAuth();
 
     useEffect(() => {
         const onBackPress = () => {
@@ -40,13 +41,16 @@ export const useHome = () => {
         router.push('/editProfile');
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        // Limpa dados de autenticação
+        await authService.logout();
+        clearUserName();
         // Ao clicar no botão de logout da tela, volta para o início
         router.replace('/welcome');
     };
 
     return {
-        userName,
+        userName: userName || "Usuário",
         handleNavigateToProfile,
         handleLogout
     };

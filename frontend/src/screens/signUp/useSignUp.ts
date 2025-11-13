@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { authService } from '@/services/authService'; // Certifique-se que o path está certo
 import { validateSignUp, ValidationError } from '@/utils/validation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useSignUp = () => {
     // Estados em Inglês
@@ -14,6 +15,9 @@ export const useSignUp = () => {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [showSuccess, setShowSuccess] = useState(false);
+
+    // Acessa o contexto de autenticação
+    const { setUserName } = useAuth();
 
     // Handler genérico para limpar erros ao digitar
     const clearError = (field: string) => {
@@ -54,6 +58,10 @@ export const useSignUp = () => {
 
             const response = await authService.signUp(signUpPayload);
             await authService.saveToken(response.token);
+            
+            // Salva o nome do usuário no contexto e no AsyncStorage
+            await authService.saveUserName(name);
+            setUserName(name);
 
             // Lógica de 'Manter Conectado' pode ser implementada aqui futuramente
 
