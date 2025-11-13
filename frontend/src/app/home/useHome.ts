@@ -11,7 +11,7 @@ export const useHome = () => {
             // Abre o alerta perguntando se quer sair
             Alert.alert(
                 "Sair do aplicativo", // Título
-                "Você deseja realmente sair do aplicativo?", // Mensagem
+                "Você deseja sair do aplicativo?", // Mensagem
                 [
                     {
                         text: "Não",
@@ -23,7 +23,7 @@ export const useHome = () => {
                         onPress: () => BackHandler.exitApp(), // Fecha o aplicativo totalmente
                     }
                 ],
-                { cancelable: false } // Obriga o usuário a clicar em um botão
+                { cancelable: true } // Pode cancelar a operação
             );
 
             // Retornar 'true' diz ao sistema: "Eu já tratei o botão voltar, não faça mais nada"
