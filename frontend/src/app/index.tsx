@@ -9,7 +9,7 @@ import { Arvo_400Regular, Arvo_700Bold } from '@expo-google-fonts/arvo';
 // Importe seu serviço de autenticação (ajuste o caminho se necessário)
 // import { authService } from '../services/authService';
 
-const Index = () => {
+const AppEntry = () => {
     const router = useRouter();
 
     const [fontsLoaded] = useFonts({
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Index;
+export default AppEntry;
