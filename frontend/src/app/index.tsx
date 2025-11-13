@@ -1,72 +1,65 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { useFonts } from 'expo-font'
-import { Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto";
+import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
+
+// Fontes que precisam carregar
+import { useFonts, Roboto_400Regular, Roboto_700Bold } from "@expo-google-fonts/roboto";
 import { Arvo_400Regular, Arvo_700Bold } from '@expo-google-fonts/arvo';
-import Logo_hor from '@/assets/Logo/Logo-hor'
-import { Button } from '@/components/button';
-import { router } from 'expo-router';
+
+// Importe seu serviço de autenticação (ajuste o caminho se necessário)
+// import { authService } from '../services/authService';
 
 const Index = () => {
-  const [fontsLoaded] = useFonts({
-    Roboto_400Regular,
-    Roboto_700Bold,
-    Arvo_400Regular, 
-    Arvo_700Bold
-  });
+    const router = useRouter();
 
-  function bold(text: string) {
-    return <Text style={styles.text_bold}>{text}</Text>
-  }
+    const [fontsLoaded] = useFonts({
+        Roboto_400Regular,
+        Roboto_700Bold,
+        Arvo_400Regular,
+        Arvo_700Bold
+    });
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.logo}><Logo_hor/></View>
+    useEffect(() => {
+        if (fontsLoaded) {
+            const checkAuth = async () => {
+                try {
+                    // 3. Lógica de verificação de autenticação
+                    // (Descomente e ajuste seu authService quando for implementar)
+                    // const token = await authService.getToken(); 
+                    const token = null; // Simule estar deslogado por enquanto
 
-        <Text style={styles.text}>{bold("Planeje")}, {bold("escolha")} e {bold("viva")} sua casa inteligente!</Text>
-      </View>
-      <View style={styles.buttons}>
-        <Button title='Entrar' onPress={() => router.navigate("./entrar")} />
-        <Button title='Cadastro' onPress={() => router.navigate("./cadastro")} />
-      </View>
-    </View>
-  )
-}
+                    if (token) {
+                        // Se logado, manda para a home
+                        router.replace('./home');
+                    } else {
+                        // Se não, manda para a tela de 'welcome'
+                        router.replace('./welcome');
+                    }
+                } catch (e) {
+                    console.error("Falha ao verificar status de auth", e);
+                    // Em caso de erro, vá para a tela de 'welcome'
+                    router.replace('./welcome');
+                }
+            };
 
-export default Index
+            checkAuth();
+        }
+    }, [fontsLoaded]); 
+
+    return (
+        <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#4A4E69" />
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#F2E9E4",
-    flex: 1,
-    paddingVertical: 48,
-    paddingHorizontal: 16,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
-  logo: {
-    height: 60,
-    width: 200,
-  },
-  header: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    alignSelf: "stretch",
-    gap: 16,
-  },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F2E9E4', // Cor de fundo do seu app
+    },
+});
 
-  text: {
-    color: "#4A4E69",
-    fontFamily: "Roboto_400Regular",
-    fontSize: 20,
-  },
-  text_bold: {
-    fontFamily: "Roboto_700Bold",
-  },
-  buttons: {
-    gap: 24,
-    width: "100%"
-  }
-})
+export default Index;

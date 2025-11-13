@@ -11,7 +11,7 @@ import { SuccessCard } from '@/components/successCard';
 import { authService, SignUpData } from '@/services/authService';
 import { validateSignUp, ValidationError } from '@/utils/validation';
 
-const Cadastro = () => {
+const SignUp = () => {
     const [isChecked, setChecked] = useState(false);
     const [formData, setFormData] = useState<SignUpData>({
         nome: '',
@@ -84,7 +84,7 @@ const Cadastro = () => {
             <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.svcontainer} keyboardShouldPersistTaps="handled">
 
                 <View style={styles.header}>
-                    <View style={styles.logo}><Logo_hor onPress={() => router.navigate("./")} /></View>
+                    <View style={styles.logo}><Logo_hor onPress={() => router.navigate("./welcome")} /></View>
                     <Text style={styles.h1}>Cadastro</Text>
                 </View>
 
@@ -153,14 +153,14 @@ const Cadastro = () => {
                 </View>
 
                 <View style={styles.footer}>
-                    <Text style={styles.text} >Já tem uma conta? <Text style={styles.text_bold} onPress={() => router.navigate("./entrar")} >Entre</Text></Text>
+                    <Text style={styles.text} >Já tem uma conta? <Text style={styles.text_bold} onPress={() => router.navigate("./signIn")} >Entre</Text></Text>
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
     )
 }
 
-export default Cadastro
+export default SignUp
 
 const styles = StyleSheet.create({
     logo: {
