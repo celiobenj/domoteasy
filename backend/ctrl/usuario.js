@@ -1,67 +1,27 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { openDb } from '../db/configdb.js'
-// import Usuario from '../entidades/usuario.js';
+import Usuario from '../entidades/usuario.js';
+
+// jogar parte de banco de dados para entidade
+// verificação de formato de senha no ctrl
 
 class CtrlUsuario {
 
     async cadastro(req, res) {
         const { nome, email, senha } = req.body;
-        const db = await openDb();
 
-        try {
-            const usuarioExistente = await db.get(
-                'SELECT * FROM usuarios WHERE email = ?',
-                [email]
-            );
+        senhaHasheada = hashearSenha(senha)
+        const usuario = new Usuario(nome, email, senhaHasheada)
+        const result = await usuario.cadastro()
 
-            if (usuarioExistente) {
-                return res.status(409).json({ erro: "Este e-mail já está cadastrado." });
-            }
-
-            const result = await registrarUsuario(db, nome, email, senha);
-
-            res.status(201).json(result);
-
-        } catch (error) {
-            console.error("Erro no cadastro:", error);
-            res.status(500).json({ erro: "Erro ao salvar usuário." });
-        }
+        res.status(result.status).json(result.desc)
     }
 
     async login(req, res) {
         const { email, senha } = req.body;
-        const db = await openDb();
 
-        try {
-            const usuario = await db.get(
-                'SELECT * FROM usuarios WHERE email = ?',
-                [email]
-            );
-
-            if (!usuario) {
-                return res.status(401).json({ erro: "Email inválido." });
-            }
-
-            const senhaValida = await compararSenha(senha, usuario.senhaHash);
-            if (!senhaValida) {
-
-                return res.status(401).json({ erro: "Senha inválida." });
-            }
-
-            const payload = { id: usuario.id, email: usuario.email };
-            const token = jwt.sign(
-                payload, 
-                process.env.JWT_SECRET,
-                { expiresIn: '1h' }
-            );
-
-            res.status(200).json({ token: token , id: usuario.id});
-
-        } catch (error) {
-            console.error("Erro no login:", error);
-            res.status(500).json({ erro: "Erro interno no login." });
-        }
+        senhaHasheada = hashearSenha(senha)
+        const usuario = new Usuario("", email, senha)
     }
 
     async atualizarDados(req, res){
@@ -152,27 +112,6 @@ class CtrlUsuario {
             res.status(500).json({ erro: "Erro ao obter nome"});
         }
     }
-}
-
-async function registrarUsuario(db, nome, email, senha) {
-    const senhaHash = await hashearSenha(senha);
-    const tipoAssinatura = 'Comum';
-
-    const result = await db.run(
-        'INSERT INTO usuarios (nome, email, senhaHash, tipoAssinatura) VALUES (?, ?, ?, ?)',
-        [nome, email, senhaHash, tipoAssinatura]
-    );
-
-    const novoId = result.lastID;
-
-    const payload = { id: novoId, email: email };
-    const token = jwt.sign(
-        payload, 
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-    );
-
-    return { token: token, id: novoId };
 }
 
 const hashearSenha = (senha) => bcrypt.hash(senha, 10);
