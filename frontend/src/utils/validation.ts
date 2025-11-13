@@ -19,21 +19,21 @@ export const isValidPassword = (senha: string): ValidationError | null => {
   const errors: string[] = [];
 
   if (senha.length < 8) {
-    errors.push("Mínimo 8 caracteres");
+    errors.push("• Mínimo 8 caracteres");
   }
 
   if (!/[a-zA-Z]/.test(senha)) {
-    errors.push("Deve conter pelo menos uma letra");
+    errors.push("• Deve conter pelo menos uma letra");
   }
 
   if (!/[0-9]/.test(senha)) {
-    errors.push("Deve conter pelo menos um número");
+    errors.push("• Deve conter pelo menos um número");
   }
 
   if (errors.length > 0) {
     return {
       field: "senha",
-      message: errors.join(", ")
+      message: errors.join("\n")
     };
   }
 

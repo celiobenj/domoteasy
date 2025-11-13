@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { Alert } from 'react-native';
 import api from '../../services/api';
+import { isValidPassword } from '../../utils/validation';
 
 export const useEditProfile = () => {
     // Estados para os campos de senha
@@ -36,6 +37,13 @@ export const useEditProfile = () => {
         }
         if (newPassword !== confirmPassword) {
             setErrors((prev) => ({ ...prev, confirmPassword: 'As senhas não coincidem' }));
+            return;
+        }
+
+        // 2. Validar critérios da nova senha
+        const validationError = isValidPassword(newPassword);
+        if (validationError) {
+            setErrors((prev) => ({ ...prev, newPassword: validationError.message }));
             return;
         }
 

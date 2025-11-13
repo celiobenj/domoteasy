@@ -18,6 +18,7 @@ import { SuccessCard } from '@/components/successCard';
 import { useEditProfile } from './useEditProfile';
 import { styles } from './styles';
 import { theme } from '@/theme/theme';
+import { isValidPassword } from '@/utils/validation';
 
 const EditProfileScreen = () => {
     const {
@@ -34,6 +35,9 @@ const EditProfileScreen = () => {
         handleGoBack,
         handleNavigateHome
     } = useEditProfile();
+
+    // Validar critérios de senha em tempo real
+    const passwordValidation = newPassword ? isValidPassword(newPassword) : null;
 
     return (
         <KeyboardAvoidingView
@@ -98,6 +102,11 @@ const EditProfileScreen = () => {
                                 clearError('newPassword');
                             }}
                         />
+                        {passwordValidation && (
+                            <Text style={styles.validationText}>
+                                {passwordValidation.message}
+                            </Text>
+                        )}
                         {errors.newPassword && <Text style={styles.errorText}>{errors.newPassword}</Text>}
                     </View>
 

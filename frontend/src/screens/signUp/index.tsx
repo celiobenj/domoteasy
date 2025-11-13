@@ -13,6 +13,7 @@ import { SuccessCard } from '@/components/successCard';
 import { useSignUp } from './useSignUp';
 import { styles } from './styles';
 import { theme } from '@/theme/theme';
+import { isValidPassword } from '@/utils/validation';
 
 const SignUpScreen = () => {
     const {
@@ -30,6 +31,9 @@ const SignUpScreen = () => {
         handleNavigateToSignIn,
         handleNavigateBack
     } = useSignUp();
+
+    // Validar critérios de senha em tempo real
+    const passwordValidation = password ? isValidPassword(password) : null;
 
     return (
         <KeyboardAvoidingView
@@ -107,6 +111,11 @@ const SignUpScreen = () => {
                                 clearError('senha');
                             }}
                         />
+                        {passwordValidation && (
+                            <Text style={styles.validationText}>
+                                {passwordValidation.message}
+                            </Text>
+                        )}
                         {errors.senha && <Text style={styles.errorText}>{errors.senha}</Text>}
                     </View>
 

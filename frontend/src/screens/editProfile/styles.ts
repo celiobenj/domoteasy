@@ -70,7 +70,16 @@ export const styles = StyleSheet.create({
         color: theme.colors.error,
         fontSize: theme.typography.fontSize.xsmall,
         fontFamily: theme.typography.fontFamily.regular,
-        marginTop: -20,
+        marginTop: theme.spacing.small,
         marginBottom: theme.spacing.small,
+        lineHeight: 18,
+    },
+    validationText: {
+        color: theme.colors.text,
+        fontSize: theme.typography.fontSize.xsmall,
+        fontFamily: theme.typography.fontFamily.regular,
+        marginTop: theme.spacing.small,
+        marginBottom: theme.spacing.small,
+        lineHeight: 18,
     }
 });

@@ -12,6 +12,7 @@ import { SuccessCard } from '@/components/successCard';
 import { useSignIn } from './useSignIn';
 import { styles } from './styles';
 import { theme } from '@/theme/theme';
+import { isValidPassword } from '@/utils/validation';
 
 const SignInScreen = () => {
     // Destruturamos tudo do nosso hook customizado
@@ -28,6 +29,9 @@ const SignInScreen = () => {
         handleNavigateToSignUp,
         handleNavigateBack
     } = useSignIn();
+
+    // Validar critérios de senha em tempo real
+    const passwordValidation = formData.senha ? isValidPassword(formData.senha) : null;
 
     return (
         <KeyboardAvoidingView
@@ -83,6 +87,11 @@ const SignInScreen = () => {
                             value={formData.senha}
                             onChangeText={(text) => handleInputChange('senha', text)}
                         />
+                        {passwordValidation && (
+                            <Text style={styles.validationText}>
+                                {passwordValidation.message}
+                            </Text>
+                        )}
                         {errors.senha && <Text style={styles.errorText}>{errors.senha}</Text>}
                     </View>
 
