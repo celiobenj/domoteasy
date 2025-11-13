@@ -1,102 +1,70 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { router } from 'expo-router'
-import { Button } from '@/components/button'
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+// Componentes
 import { ProfilePhoto } from "@/components/profilePhoto";
-import { TouchableOpacity } from 'react-native';
 
-var name = "Célio Benjamim"
+// Hook e Estilos
+import { useHome } from './useHome';
+import { styles } from './styles';
+import { theme } from '@/theme/theme';
 
-const Home = () => {
+const HomeScreen = () => {
+    const { userName, handleNavigateToProfile, handleLogout } = useHome();
+
     return (
-        <View style={styles.page}>
-            <View style={styles.top}>
+        <View style={styles.container}>
+            {/* Seção Superior */}
+            <View style={styles.topSection}>
                 <View style={styles.header}>
-                    {/* <MaterialCommunityIcons
-                        name={"menu"}
-                        size={48}
-                        color={"#4A4E69"}
-                    /> */}
+                    {/* Título da Página */}
                     <Text style={styles.title}>Home</Text>
-                    <ProfilePhoto size={48} />
+
+                    {/* Foto de Perfil no Topo (Clicável para Logout ou Perfil?) */}
+                    <TouchableOpacity onPress={handleNavigateToProfile}>
+                        <ProfilePhoto size={48} />
+                    </TouchableOpacity>
                 </View>
+
+                {/* Saudação */}
                 <View style={styles.greetings}>
-                    <Text style={styles.text_bold}>Olá, {name}</Text>
+                    <Text style={styles.greetingText}>Olá, {userName}</Text>
                 </View>
             </View>
+
+            {/* Rodapé / Menu de Navegação */}
             <View style={styles.footer}>
-                <TouchableOpacity activeOpacity={0.9} onPress={() => router.navigate("./home")}>
+                {/* Botão Home (Ativo) */}
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    style={styles.footerButton}
+                // onPress={() => {}} // Já estamos na home
+                >
                     <MaterialCommunityIcons
                         name={"home"}
                         size={48}
-                        color={"#4A4E69"}
+                        color={theme.colors.primary}
                     />
                 </TouchableOpacity>
-                <ProfilePhoto size={48} />
+
+                {/* Botão Perfil/Logout no Rodapé */}
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    style={styles.footerButton}
+                    onPress={handleLogout} // Exemplo: Botão da direita faz Logout
+                >
+                    {/* Usando um ícone de 'Sair' (logout) para ficar claro, ou manter ProfilePhoto */}
+                    <MaterialCommunityIcons
+                        name="logout"
+                        size={32}
+                        color={theme.colors.primary}
+                    />
+                    {/* Se preferir manter a foto como no original: <ProfilePhoto size={48} /> */}
+                </TouchableOpacity>
             </View>
         </View>
-    )
+    );
 }
 
-export default Home
-
-const styles = StyleSheet.create({
-    text: {
-        fontFamily: "Roboto_400Regular",
-        color: "#4A4E69",
-        fontSize: 20,
-    },
-    text_bold: {
-        fontFamily: "Roboto_700Bold",
-        color: "#4A4E69",
-        fontSize: 24,
-    },
-    title: {
-        fontFamily: "Arvo_400Regular",
-        color: "#4A4E69",
-        fontSize: 28,
-    },
-    page: {
-        backgroundColor: "#F2E9E4",
-        flex: 1,
-        flexDirection: "column",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    top: {
-        paddingTop: 48,
-        paddingHorizontal: 16,
-        flexDirection: "column",
-        alignItems: "flex-start",
-        gap: 24,
-        alignSelf: "stretch",
-    },
-    footer: {
-        // height: 70,
-        flexDirection: "row",
-        paddingHorizontal: 32,
-        paddingVertical: 12,
-        justifyContent: "space-around",
-        alignItems: "center",
-        flexShrink: 0,
-        alignSelf: "stretch",
-        borderTopColor: "#4A4E69",
-        borderTopWidth: 4,
-        borderStyle: "solid",
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        alignSelf: 'stretch',
-    },
-    greetings: {
-        // align-items: center;
-        // gap: 10px;
-        // align-self: stretch;
-        paddingHorizontal: 8,
-        alignItems: "flex-start",
-        gap: 10,
-        alignSelf: "stretch"
-    }
-})
+export default HomeScreen;
