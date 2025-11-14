@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import Usuario from '../entidades/usuario.js';
 
 // jogar parte de banco de dados para entidade
@@ -10,9 +9,9 @@ class CtrlUsuario {
     async cadastro(req, res) {
         const { nome, email, senha } = req.body;
 
-        senhaHasheada = hashearSenha(senha)
-        const usuario = new Usuario(nome, email, senhaHasheada)
-        const result = await usuario.cadastro()
+        const senhaHasheada = await hashearSenha(senha)
+        const usuario = new Usuario()
+        const result = await usuario.cadastro(nome, email, senhaHasheada)
 
         res.status(result.status).json(result.desc)
     }
@@ -20,8 +19,10 @@ class CtrlUsuario {
     async login(req, res) {
         const { email, senha } = req.body;
 
-        senhaHasheada = hashearSenha(senha)
-        const usuario = new Usuario("", email, senha)
+        const usuario = new Usuario()
+        const result = await usuario.login(email, senha)
+
+        res.status(result.status).json(result.desc)
     }
 
     async atualizarDados(req, res){

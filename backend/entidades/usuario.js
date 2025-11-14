@@ -1,9 +1,9 @@
 import { openDb } from '../db/configdb.js'
 
 class Usuario {
-    constructor(id = 0, nome, email, senhaHash, tipoAssinatura = "Comum") {}
+    constructor(id = 0, nome = "", email = "", senhaHash = "", tipoAssinatura = "Comum") {}
 
-    async cadastro() {
+    async cadastro(nome, email, senha) {
         const db = await openDb();
 
         try {
@@ -15,8 +15,9 @@ class Usuario {
             if (usuarioExistente) {
                 return { isError: true, status: 409, desc: { erro: "Este e-mail já está cadastrado." }};
             }
-
-            const result = await registrarUsuario(db, this.nome, this.email, this.senha);
+            
+            const senhaHasheada = await hashearSenha(senha)
+            const result = await registrarUsuario(db, nome, email, senhaHasheada);
 
             return { isError: false, status: 201, desc: result }
 
@@ -26,7 +27,7 @@ class Usuario {
         }
     }
 
-    async login() {
+    async login(email, senha) {
         const db = await openDb();
         
         try {
@@ -39,7 +40,7 @@ class Usuario {
                 return { isError: true, status: 401, desc: { erro: "Email inválido." }};
             }
 
-            const senhaValida = await compararSenha(this.senha, usuario.senhaHash);
+            const senhaValida = await compararSenha(senha, usuario.senhaHash);
 
             if (!senhaValida) {
                 return { isError: true, status: 401, desc: { erro: "Senha inválida." }};
@@ -62,9 +63,6 @@ class Usuario {
 }
 
 async function registrarUsuario(db, nome, email, senha) {
-    const senhaHash = await hashearSenha(senha);
-    const tipoAssinatura = 'Comum';
-
     const result = await db.run(
         'INSERT INTO usuarios (nome, email, senhaHash, tipoAssinatura) VALUES (?, ?, ?, ?)',
         [nome, email, senhaHash, tipoAssinatura]
