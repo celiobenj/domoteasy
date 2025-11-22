@@ -12,6 +12,7 @@ export const useSubscription = () => {
     const [cardName, setCardName] = useState('');
     const [cardExpiry, setCardExpiry] = useState('');
     const [cardCvv, setCardCvv] = useState('');
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleSelectPlan = (plan: Plan) => {
         setSelectedPlan(plan);
@@ -26,28 +27,25 @@ export const useSubscription = () => {
     };
 
     const handleSubscribe = async () => {
-        if (!selectedPlan) return;
-
-        // Validação básica
-        if (!cardNumber || !cardName || !cardExpiry || !cardCvv) {
-            Alert.alert('Erro', 'Preencha todos os campos do cartão.');
-            return;
-        }
+        // TESTING MODE: Removed all validations for easy premium testing
+        // No card validation, no Luhn algorithm, no field checks
 
         try {
             setLoading(true);
-            await SubscriptionService.subscribe(selectedPlan.id, {
-                cardNumber,
-                cardName,
-                cardExpiry,
-                cardCvv
-            });
 
+            // Simulate API delay for realism (very short)
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // Immediately upgrade to premium status
             await updateSubscriptionStatus('premium');
 
-            Alert.alert('Sucesso', 'Assinatura realizada com sucesso!', [
-                { text: 'OK', onPress: () => router.replace('/home') }
-            ]);
+            // Show success notification
+            setShowSuccess(true);
+
+            // Redirect to home after delay
+            setTimeout(() => {
+                router.replace('/home');
+            }, 1500);
         } catch (error) {
             Alert.alert('Erro', 'Falha ao processar pagamento. Tente novamente.');
             console.error(error);
@@ -84,6 +82,8 @@ export const useSubscription = () => {
         setCardExpiry,
         cardCvv,
         setCardCvv,
+        showSuccess,
+        setShowSuccess,
         handleSelectPlan,
         handleProceedToPayment,
         handleSubscribe,

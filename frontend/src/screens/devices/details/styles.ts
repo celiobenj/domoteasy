@@ -7,18 +7,37 @@ export const styles = StyleSheet.create({
         backgroundColor: theme.colors.background,
     },
     scrollContainer: {
-        padding: 20,
+        padding: theme.spacing.large,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        justifyContent: 'space-between',
+        paddingHorizontal: theme.spacing.large,
+        paddingVertical: theme.spacing.medium,
+        backgroundColor: theme.colors.background,
+    },
+    headerBackButton: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+    },
+    headerTitle: {
+        flex: 1,
+        textAlign: 'center',
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.large,
+        color: theme.colors.text,
+    },
+    headerSpacer: {
+        width: 40,
     },
     backButton: {
-        marginRight: 15,
+        marginRight: theme.spacing.medium,
     },
     title: {
-        fontSize: 24,
+        fontSize: theme.typography.fontSize.xlarge,
         fontFamily: theme.typography.fontFamily.bold,
         color: theme.colors.text,
     },

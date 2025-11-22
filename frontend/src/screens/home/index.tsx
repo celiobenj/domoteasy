@@ -1,8 +1,9 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Componentes
 import { ProfilePhoto } from "@/components/profilePhoto";
+import { ProjectCard } from '@/components/projectCard';
 
 // Hook e Estilos
 import { useHome } from './useHome';
@@ -10,7 +11,16 @@ import { styles } from './styles';
 import { theme } from '@/theme/theme';
 
 const HomeScreen = () => {
-    const { userName, handleNavigateToProfile, handleLogout, handleNavigateToCreateProject, handleNavigateToTechnicians } = useHome();
+    const {
+        userName,
+        projects,
+        loading,
+        handleNavigateToProfile,
+        handleLogout,
+        handleNavigateToCreateProject,
+        handleNavigateToTechnicians,
+        handleNavigateToProject
+    } = useHome();
 
     return (
         <View style={styles.container}>
@@ -20,7 +30,7 @@ const HomeScreen = () => {
                     {/* Título da Página */}
                     <Text style={styles.title}>Home</Text>
 
-                    {/* Foto de Perfil no Topo (Clicável para Logout ou Perfil?) */}
+                    {/* Foto de Perfil no Topo */}
                     <TouchableOpacity>
                         <ProfilePhoto size={48} onPress={handleNavigateToProfile} />
                     </TouchableOpacity>
@@ -33,29 +43,66 @@ const HomeScreen = () => {
             </View>
 
             {/* Conteúdo Principal */}
-            <View style={styles.content}>
-                <TouchableOpacity
-                    style={styles.actionButton}
-                    onPress={handleNavigateToCreateProject}
-                    activeOpacity={0.8}
-                >
-                    <Text style={styles.actionButtonText}>Novo Projeto</Text>
-                    <View style={styles.actionButtonIcon}>
-                        <MaterialCommunityIcons name="plus" size={24} color={theme.colors.onPrimary} />
-                    </View>
-                </TouchableOpacity>
+            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+                {/* Meus Projetos Section */}
+                <View style={styles.projectsSection}>
+                    <Text style={styles.sectionTitle}>Meus Projetos</Text>
 
-                <TouchableOpacity
-                    style={[styles.actionButton, { backgroundColor: theme.colors.white }]}
-                    onPress={handleNavigateToTechnicians}
-                    activeOpacity={0.8}
-                >
-                    <Text style={[styles.actionButtonText, { color: theme.colors.primary }]}>Encontrar Técnicos</Text>
-                    <View style={[styles.actionButtonIcon, { backgroundColor: theme.colors.background }]}>
-                        <MaterialCommunityIcons name="account-search" size={24} color={theme.colors.primary} />
-                    </View>
-                </TouchableOpacity>
-            </View>
+                    {loading ? (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color={theme.colors.primary} />
+                        </View>
+                    ) : projects.length > 0 ? (
+                        <View style={styles.projectsList}>
+                            {projects.map((project) => (
+                                <ProjectCard
+                                    key={project.id}
+                                    project={project}
+                                    onPress={handleNavigateToProject}
+                                />
+                            ))}
+                        </View>
+                    ) : (
+                        <View style={styles.emptyState}>
+                            <Text style={styles.emptyStateText}>
+                                Você ainda não criou nenhum projeto.
+                            </Text>
+                            <TouchableOpacity
+                                style={styles.emptyStateButton}
+                                onPress={handleNavigateToCreateProject}
+                                activeOpacity={0.8}
+                            >
+                                <Text style={styles.emptyStateButtonText}>Criar seu primeiro projeto</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                </View>
+
+                {/* Action Buttons */}
+                <View style={styles.actionsSection}>
+                    <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={handleNavigateToCreateProject}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={styles.actionButtonText}>Novo Projeto</Text>
+                        <View style={styles.actionButtonIcon}>
+                            <MaterialCommunityIcons name="plus" size={24} color={theme.colors.onPrimary} />
+                        </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.actionButton, { backgroundColor: theme.colors.white }]}
+                        onPress={handleNavigateToTechnicians}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={[styles.actionButtonText, { color: theme.colors.primary }]}>Encontrar Técnicos</Text>
+                        <View style={[styles.actionButtonIcon, { backgroundColor: theme.colors.background }]}>
+                            <MaterialCommunityIcons name="account-search" size={24} color={theme.colors.primary} />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
 
             {/* Rodapé / Menu de Navegação */}
             <View style={styles.footer}>
@@ -63,7 +110,6 @@ const HomeScreen = () => {
                 <TouchableOpacity
                     activeOpacity={0.9}
                     style={styles.footerButton}
-                // onPress={() => {}} // Já estamos na home
                 >
                     <MaterialCommunityIcons
                         name={"home"}
@@ -76,15 +122,13 @@ const HomeScreen = () => {
                 <TouchableOpacity
                     activeOpacity={0.9}
                     style={styles.footerButton}
-                    onPress={handleLogout} // Exemplo: Botão da direita faz Logout
+                    onPress={handleLogout}
                 >
-                    {/* Usando um ícone de 'Sair' (logout) para ficar claro, ou manter ProfilePhoto */}
                     <MaterialCommunityIcons
                         name="logout"
                         size={32}
                         color={theme.colors.primary}
                     />
-                    {/* Se preferir manter a foto como no original: <ProfilePhoto size={48} /> */}
                 </TouchableOpacity>
             </View>
         </View>

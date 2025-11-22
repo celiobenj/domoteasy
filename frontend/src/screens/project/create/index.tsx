@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { router } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
 import { useCreateProject } from './useCreateProject';
 import { styles } from './styles';
 import Checkbox from 'expo-checkbox'; // Or custom checkbox if preferred
@@ -85,9 +87,14 @@ export default function CreateProjectScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Novo Projeto</Text>
-                <Text style={styles.subtitle}>Passo {step} de {totalSteps}</Text>
+                <TouchableOpacity onPress={() => router.back()} style={styles.headerBackButton}>
+                    <Feather name="arrow-left" size={24} color={theme.colors.text} />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Novo Projeto</Text>
+                <View style={styles.headerSpacer} />
             </View>
+
+            <Text style={styles.subtitle}>Passo {step} de {totalSteps}</Text>
 
             <View style={styles.content}>
                 {step === 1 && renderStep1()}

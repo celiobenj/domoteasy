@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { styles } from '../styles';
 import { useSubscription } from '../useSubscription';
@@ -18,10 +18,11 @@ const PlansScreen = () => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <MaterialCommunityIcons name="arrow-left" size={28} color={theme.colors.text} />
+                <TouchableOpacity onPress={() => router.back()} style={styles.headerBackButton}>
+                    <Feather name="arrow-left" size={24} color={theme.colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.title}>Fazer Upgrade</Text>
+                <Text style={styles.headerTitle}>Fazer Upgrade</Text>
+                <View style={styles.headerSpacer} />
             </View>
 
             <Text style={styles.subtitle}>

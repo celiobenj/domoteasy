@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTechnicianDetail } from './useTechnicianDetail';
 import { styles } from './styles';
 import { theme } from '@/theme/theme';
@@ -26,8 +27,16 @@ export default function TechnicianDetailScreen() {
 
     return (
         <View style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.headerBackButton}>
+                    <Feather name="arrow-left" size={24} color={theme.colors.text} />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Detalhes do Técnico</Text>
+                <View style={styles.headerSpacer} />
+            </View>
+
             <ScrollView>
-                <View style={styles.header}>
+                <View style={styles.profileHeader}>
                     <View style={styles.avatar}>
                         <Text style={styles.avatarText}>
                             {technician.name.split(' ').map(n => n[0]).join('').substring(0, 2)}

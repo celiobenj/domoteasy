@@ -5,26 +5,46 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: theme.colors.background,
-        padding: 20,
+        padding: theme.spacing.large,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        justifyContent: 'space-between',
+        paddingHorizontal: theme.spacing.large,
+        paddingVertical: theme.spacing.medium,
+        marginBottom: theme.spacing.medium,
+    },
+    headerBackButton: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+    },
+    headerTitle: {
+        flex: 1,
+        textAlign: 'center',
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.large,
+        color: theme.colors.text,
+    },
+    headerSpacer: {
+        width: 40,
     },
     backButton: {
-        marginRight: 15,
+        marginRight: theme.spacing.medium,
     },
     title: {
-        fontSize: 24,
+        fontSize: theme.typography.fontSize.xlarge,
         fontFamily: theme.typography.fontFamily.bold,
         color: theme.colors.text,
     },
     subtitle: {
-        fontSize: 16,
+        fontSize: theme.typography.fontSize.medium,
         fontFamily: theme.typography.fontFamily.regular,
         color: theme.colors.text,
-        marginBottom: 30,
+        marginBottom: theme.spacing.xlarge,
+        paddingHorizontal: theme.spacing.large,
     },
     planCard: {
         backgroundColor: theme.colors.white, // Assuming white exists or using a light color

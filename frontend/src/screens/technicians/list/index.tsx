@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, FlatList, TextInput, ActivityIndicator } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { View, Text, FlatList, TextInput, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTechnicianList } from './useTechnicianList';
 import { styles } from './styles';
 import { TechnicianCard } from '@/components/technicianCard';
@@ -26,23 +27,27 @@ export default function TechnicianListScreen() {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Técnicos Disponíveis</Text>
+                <TouchableOpacity onPress={() => router.back()} style={styles.headerBackButton}>
+                    <Feather name="arrow-left" size={24} color={theme.colors.text} />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Técnicos Disponíveis</Text>
+                <View style={styles.headerSpacer} />
+            </View>
 
-                <View style={styles.searchContainer}>
-                    <MaterialCommunityIcons
-                        name="magnify"
-                        size={24}
-                        color={theme.colors.text}
-                        style={styles.searchIcon}
-                    />
-                    <TextInput
-                        style={styles.searchInput}
-                        placeholder="Buscar por nome ou especialidade"
-                        placeholderTextColor="#999"
-                        value={searchQuery}
-                        onChangeText={handleSearch}
-                    />
-                </View>
+            <View style={styles.searchContainer}>
+                <MaterialCommunityIcons
+                    name="magnify"
+                    size={24}
+                    color={theme.colors.text}
+                    style={styles.searchIcon}
+                />
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Buscar por nome ou especialidade"
+                    placeholderTextColor="#999"
+                    value={searchQuery}
+                    onChangeText={handleSearch}
+                />
             </View>
 
             <FlatList

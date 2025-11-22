@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useLocalSearchParams, router } from 'expo-router';
+import { Linking } from 'react-native';
 import { ProjectService, Item } from '@/services/ProjectService';
 
 export const useBudget = () => {
@@ -41,11 +42,25 @@ export const useBudget = () => {
         router.replace('/home');
     };
 
+    const handleOpenPurchaseLink = async (url: string) => {
+        try {
+            const supported = await Linking.canOpenURL(url);
+            if (supported) {
+                await Linking.openURL(url);
+            } else {
+                console.error('Cannot open URL:', url);
+            }
+        } catch (error) {
+            console.error('Error opening URL:', error);
+        }
+    };
+
     return {
         items,
         total,
         loading,
         handleSave,
         handleExit,
+        handleOpenPurchaseLink,
     };
 };

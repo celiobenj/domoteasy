@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { useDeviceDetails } from './useDeviceDetails';
 import { theme } from '@/theme/theme';
@@ -20,10 +20,11 @@ const DeviceDetailsScreen = () => {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-                        <MaterialCommunityIcons name="arrow-left" size={28} color={theme.colors.text} />
+                    <TouchableOpacity onPress={handleGoBack} style={styles.headerBackButton}>
+                        <Feather name="arrow-left" size={24} color={theme.colors.text} />
                     </TouchableOpacity>
-                    <Text style={styles.title}>Detalhes do Dispositivo</Text>
+                    <Text style={styles.headerTitle}>Detalhes do Dispositivo</Text>
+                    <View style={styles.headerSpacer} />
                 </View>
                 <View style={styles.loadingContainer}>
                     <Text>Dispositivo não encontrado</Text>
@@ -34,13 +35,15 @@ const DeviceDetailsScreen = () => {
 
     return (
         <View style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={handleGoBack} style={styles.headerBackButton}>
+                    <Feather name="arrow-left" size={24} color={theme.colors.text} />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Detalhes</Text>
+                <View style={styles.headerSpacer} />
+            </View>
+
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-                        <MaterialCommunityIcons name="arrow-left" size={28} color={theme.colors.text} />
-                    </TouchableOpacity>
-                    <Text style={styles.title}>Detalhes</Text>
-                </View>
 
                 {/* Device Image Placeholder */}
                 <View style={styles.imagePlaceholder}>

@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, ActivityIndicator } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { styles } from '../styles';
 import { useSubscription } from '../useSubscription';
 import { theme } from '@/theme/theme';
+import { SuccessCard } from '@/components/successCard';
 
 const PaymentScreen = () => {
     const {
@@ -13,16 +14,25 @@ const PaymentScreen = () => {
         cardName, setCardName,
         cardExpiry, setCardExpiry,
         cardCvv, setCardCvv,
+        showSuccess,
+        setShowSuccess,
         handleSubscribe
     } = useSubscription();
 
     return (
         <View style={styles.container}>
+            <SuccessCard
+                visible={showSuccess}
+                message="Você agora é Premium! 🎉"
+                onHide={() => setShowSuccess(false)}
+            />
+
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-                    <MaterialCommunityIcons name="arrow-left" size={28} color={theme.colors.text} />
+                <TouchableOpacity onPress={() => router.back()} style={styles.headerBackButton}>
+                    <Feather name="arrow-left" size={24} color={theme.colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.title}>Pagamento</Text>
+                <Text style={styles.headerTitle}>Pagamento</Text>
+                <View style={styles.headerSpacer} />
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
