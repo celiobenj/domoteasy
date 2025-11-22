@@ -10,7 +10,7 @@ import { styles } from './styles';
 import { theme } from '@/theme/theme';
 
 const HomeScreen = () => {
-    const { userName, handleNavigateToProfile, handleLogout } = useHome();
+    const { userName, handleNavigateToProfile, handleLogout, handleNavigateToCreateProject, handleNavigateToTechnicians } = useHome();
 
     return (
         <View style={styles.container}>
@@ -21,8 +21,8 @@ const HomeScreen = () => {
                     <Text style={styles.title}>Home</Text>
 
                     {/* Foto de Perfil no Topo (Clicável para Logout ou Perfil?) */}
-                    <TouchableOpacity onPress={handleNavigateToProfile}>
-                        <ProfilePhoto size={48} />
+                    <TouchableOpacity>
+                        <ProfilePhoto size={48} onPress={handleNavigateToProfile} />
                     </TouchableOpacity>
                 </View>
 
@@ -30,6 +30,31 @@ const HomeScreen = () => {
                 <View style={styles.greetings}>
                     <Text style={styles.greetingText}>Olá, {userName}</Text>
                 </View>
+            </View>
+
+            {/* Conteúdo Principal */}
+            <View style={styles.content}>
+                <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={handleNavigateToCreateProject}
+                    activeOpacity={0.8}
+                >
+                    <Text style={styles.actionButtonText}>Novo Projeto</Text>
+                    <View style={styles.actionButtonIcon}>
+                        <MaterialCommunityIcons name="plus" size={24} color={theme.colors.onPrimary} />
+                    </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[styles.actionButton, { backgroundColor: theme.colors.white }]}
+                    onPress={handleNavigateToTechnicians}
+                    activeOpacity={0.8}
+                >
+                    <Text style={[styles.actionButtonText, { color: theme.colors.primary }]}>Encontrar Técnicos</Text>
+                    <View style={[styles.actionButtonIcon, { backgroundColor: theme.colors.background }]}>
+                        <MaterialCommunityIcons name="account-search" size={24} color={theme.colors.primary} />
+                    </View>
+                </TouchableOpacity>
             </View>
 
             {/* Rodapé / Menu de Navegação */}

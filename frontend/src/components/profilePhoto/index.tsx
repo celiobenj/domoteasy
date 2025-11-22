@@ -9,7 +9,7 @@ type Props = TouchableOpacityProps & {
 
 export function ProfilePhoto({ size, ...rest }: Props) {
     return (
-        <TouchableOpacity activeOpacity={0.9} onPress={() => router.navigate("./editProfile")} {...rest}>
+        <TouchableOpacity activeOpacity={0.9} {...rest}>
             <MaterialCommunityIcons
                 name={"account"}
                 size={size}

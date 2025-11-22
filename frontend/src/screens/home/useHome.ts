@@ -38,7 +38,7 @@ export const useHome = () => {
     }, []);
 
     const handleNavigateToProfile = () => {
-        router.push('/editProfile');
+        router.push('/profile');
     };
 
     const handleLogout = async () => {
@@ -46,12 +46,22 @@ export const useHome = () => {
         await authService.logout();
         clearUserName();
         // Ao clicar no botão de logout da tela, volta para o início
-        router.replace('/welcome');
+        router.replace('/');
+    };
+
+    const handleNavigateToCreateProject = () => {
+        router.push('/project/create');
+    };
+
+    const handleNavigateToTechnicians = () => {
+        router.push('/technicians/list');
     };
 
     return {
         userName: userName || "Usuário",
         handleNavigateToProfile,
-        handleLogout
+        handleLogout,
+        handleNavigateToCreateProject,
+        handleNavigateToTechnicians
     };
 };

@@ -39,6 +39,38 @@ export const styles = StyleSheet.create({
         color: theme.colors.text,
         fontSize: theme.typography.fontSize.xlarge, // 24
     },
+    content: {
+        flex: 1,
+        width: '100%',
+        padding: theme.spacing.large,
+        justifyContent: 'center',
+        gap: theme.spacing.medium,
+    },
+    actionButton: {
+        backgroundColor: theme.colors.primary,
+        padding: theme.spacing.large,
+        borderRadius: theme.radii.medium,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    actionButtonText: {
+        ...theme.typography.styles.button,
+        fontSize: theme.typography.fontSize.large,
+    },
+    actionButtonIcon: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        padding: 8,
+        borderRadius: 50,
+    },
     // Rodapé simulando uma TabBar
     footer: {
         flexDirection: "row",
