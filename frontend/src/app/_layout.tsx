@@ -11,6 +11,11 @@ export default function RootLayout() {
         <Stack.Screen name="signUp" options={{ headerShown: false }} />
         <Stack.Screen name="home" options={{ headerShown: false }} />
         <Stack.Screen name="editProfile" options={{ headerShown: false }} />
+        <Stack.Screen name="project" options={{ headerShown: false }} />
+        <Stack.Screen name="profile" options={{ headerShown: false }} />
+        <Stack.Screen name="technicians" options={{ headerShown: false }} />
+        <Stack.Screen name="subscription" options={{ headerShown: false }} />
+        <Stack.Screen name="devices" options={{ headerShown: false }} />
       </Stack>
     </AuthProvider>
   );

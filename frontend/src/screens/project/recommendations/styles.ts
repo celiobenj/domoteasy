@@ -1,0 +1,242 @@
+import { StyleSheet } from 'react-native';
+import { theme } from '@/theme/theme';
+
+export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.large,
+    },
+    header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: theme.spacing.large,
+        paddingVertical: theme.spacing.medium,
+        marginBottom: theme.spacing.medium,
+    },
+    headerBackButton: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+    },
+    headerTitle: {
+        flex: 1,
+        textAlign: 'center',
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.large,
+        color: theme.colors.text,
+    },
+    headerSpacer: {
+        width: 40,
+    },
+    title: {
+        ...theme.typography.styles.heading,
+        fontSize: theme.typography.fontSize.xxlarge,
+        marginBottom: theme.spacing.small,
+    },
+    subtitle: {
+        ...theme.typography.styles.body,
+        color: theme.colors.text,
+        opacity: 0.8,
+        paddingHorizontal: theme.spacing.large,
+        marginBottom: theme.spacing.large,
+    },
+    listContent: {
+        paddingBottom: 100, // Space for footer
+    },
+    itemContainer: {
+        flexDirection: 'row',
+        backgroundColor: theme.colors.white,
+        borderRadius: theme.radii.medium,
+        padding: theme.spacing.medium,
+        marginBottom: theme.spacing.medium,
+        alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    itemImage: {
+        width: 60,
+        height: 60,
+        borderRadius: theme.radii.small,
+        backgroundColor: '#eee', // Placeholder
+        marginRight: theme.spacing.medium,
+    },
+    itemInfo: {
+        flex: 1,
+    },
+    itemName: {
+        ...theme.typography.styles.bodyBold,
+        fontSize: theme.typography.fontSize.medium,
+    },
+    itemBrand: {
+        ...theme.typography.styles.caption,
+        color: theme.colors.text,
+        opacity: 0.6,
+    },
+    itemPrice: {
+        ...theme.typography.styles.bodyBold,
+        color: theme.colors.primary,
+        marginTop: 4,
+    },
+    checkboxContainer: {
+        padding: theme.spacing.small,
+    },
+    footer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.large,
+        borderTopWidth: 1,
+        borderTopColor: '#E0E0E0',
+    },
+    button: {
+        backgroundColor: theme.colors.primary,
+        padding: theme.spacing.large,
+        borderRadius: theme.radii.large,
+        alignItems: 'center',
+    },
+    buttonText: {
+        ...theme.typography.styles.button,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    itemActions: {
+        flexDirection: 'row',
+        gap: theme.spacing.medium,
+        marginTop: theme.spacing.small,
+    },
+    detailsButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: theme.spacing.xsmall,
+        paddingVertical: theme.spacing.xsmall,
+        paddingHorizontal: theme.spacing.small,
+        backgroundColor: theme.colors.background,
+        borderRadius: theme.radii.small,
+    },
+    detailsButtonText: {
+        fontFamily: theme.typography.fontFamily.regular,
+        fontSize: theme.typography.fontSize.small,
+        color: theme.colors.primary,
+    },
+    purchaseLinkButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: theme.spacing.xsmall,
+        paddingVertical: theme.spacing.xsmall,
+        paddingHorizontal: theme.spacing.small,
+        backgroundColor: theme.colors.background,
+        borderRadius: theme.radii.small,
+    },
+    purchaseLinkButtonText: {
+        fontFamily: theme.typography.fontFamily.regular,
+        fontSize: theme.typography.fontSize.small,
+        color: theme.colors.primary,
+    },
+    subtotalFooter: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: theme.spacing.large,
+        paddingVertical: theme.spacing.medium,
+        backgroundColor: theme.colors.white,
+        borderTopWidth: 1,
+        borderTopColor: theme.colors.background,
+    },
+    subtotalLabel: {
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.medium,
+        color: theme.colors.text,
+    },
+    subtotalValue: {
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.large,
+        color: theme.colors.primary,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'flex-end',
+    },
+    modalContent: {
+        backgroundColor: theme.colors.white,
+        borderTopLeftRadius: theme.radii.large,
+        borderTopRightRadius: theme.radii.large,
+        maxHeight: '80%',
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: theme.spacing.large,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.background,
+    },
+    modalTitle: {
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.large,
+        color: theme.colors.text,
+        flex: 1,
+    },
+    modalBody: {
+        padding: theme.spacing.large,
+    },
+    modalBrand: {
+        fontFamily: theme.typography.fontFamily.regular,
+        fontSize: theme.typography.fontSize.medium,
+        color: theme.colors.text,
+        opacity: 0.7,
+        marginBottom: theme.spacing.xsmall,
+    },
+    modalPrice: {
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.xlarge,
+        color: theme.colors.primary,
+        marginBottom: theme.spacing.large,
+    },
+    modalSectionTitle: {
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.medium,
+        color: theme.colors.text,
+        marginTop: theme.spacing.medium,
+        marginBottom: theme.spacing.small,
+    },
+    modalDescription: {
+        fontFamily: theme.typography.fontFamily.regular,
+        fontSize: theme.typography.fontSize.medium,
+        color: theme.colors.text,
+        lineHeight: 22,
+        marginBottom: theme.spacing.medium,
+    },
+    specRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: theme.spacing.small,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.background,
+    },
+    specLabel: {
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.small,
+        color: theme.colors.text,
+    },
+    specValue: {
+        fontFamily: theme.typography.fontFamily.regular,
+        fontSize: theme.typography.fontSize.small,
+        color: theme.colors.text,
+        opacity: 0.7,
+    },
+});

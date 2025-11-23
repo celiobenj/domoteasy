@@ -3,55 +3,84 @@ import { router } from 'expo-router';
 import { BackHandler, Alert } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/services/authService';
+import { ProjectService, Project } from '@/services/ProjectService';
 
 export const useHome = () => {
     const { userName, clearUserName } = useAuth();
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        loadProjects();
+    }, []);
+
+    const loadProjects = async () => {
+        try {
+            setLoading(true);
+            const userProjects = await ProjectService.listByUser();
+            setProjects(userProjects);
+        } catch (error) {
+            console.error('Error loading projects:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         const onBackPress = () => {
-            // Abre o alerta perguntando se quer sair
             Alert.alert(
-                "Sair do aplicativo", // Título
-                "Você deseja sair do aplicativo?", // Mensagem
+                "Sair do aplicativo",
+                "Você deseja sair do aplicativo?",
                 [
                     {
                         text: "Não",
-                        onPress: () => null, // Faz nada, apenas fecha o alerta
-                        style: "cancel" // Estilo visual de cancelamento
+                        onPress: () => null,
+                        style: "cancel"
                     },
                     {
                         text: "Sim",
-                        onPress: () => BackHandler.exitApp(), // Fecha o aplicativo totalmente
+                        onPress: () => BackHandler.exitApp(),
                     }
                 ],
-                { cancelable: true } // Pode cancelar a operação
+                { cancelable: true }
             );
-
-            // Retornar 'true' diz ao sistema: "Eu já tratei o botão voltar, não faça mais nada"
             return true;
         };
 
         const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
-        // Na limpeza do useEffect, chamamos .remove() nessa referência
         return () => subscription.remove();
     }, []);
 
     const handleNavigateToProfile = () => {
-        router.push('/editProfile');
+        router.push('/profile');
     };
 
     const handleLogout = async () => {
-        // Limpa dados de autenticação
         await authService.logout();
         clearUserName();
-        // Ao clicar no botão de logout da tela, volta para o início
-        router.replace('/welcome');
+        router.replace('/');
+    };
+
+    const handleNavigateToCreateProject = () => {
+        router.push('/project/create');
+    };
+
+    const handleNavigateToTechnicians = () => {
+        router.push('/technicians/list');
+    };
+
+    const handleNavigateToProject = (projectId: string) => {
+        router.push(`/project/budget?projectId=${projectId}`);
     };
 
     return {
         userName: userName || "Usuário",
+        projects,
+        loading,
         handleNavigateToProfile,
-        handleLogout
+        handleLogout,
+        handleNavigateToCreateProject,
+        handleNavigateToTechnicians,
+        handleNavigateToProject,
     };
 };
