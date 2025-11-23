@@ -1,7 +1,8 @@
-import Usuario from '../entidades/usuario.js';
+import Usuario from '../entidades/e-usuario.js';
 
-// jogar parte de banco de dados para entidade
-// verificação de formato de senha no ctrl
+// jogar parte de banco de dados para entidade - FEITO
+// verificação de formato de senha no ctrl - A FAZER
+// pedir para o Célio mandar a função de verificação de senha
 
 class CtrlUsuario {
 
