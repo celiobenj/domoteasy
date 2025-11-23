@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import CtrlPagamento from '../ctrl/pagamento.js';
+import CtrlPagamento from '../ctrl/ctrl-pagamento.js';
 import verificarToken from '../sec/authMiddleware.js';
 
 const router = Router();

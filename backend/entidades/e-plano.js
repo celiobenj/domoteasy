@@ -28,7 +28,7 @@ class Plano {
         const db = await openDb();
         try {
             await db.run(
-                'INSERT INTO planos (nome, valor, descricao, duracao_dias) VALUES (?, ?, ?, ?)',
+                'INSERT INTO planos (nome, valor, descricao, duracaoDias) VALUES (?, ?, ?, ?)',
                 [nome, valor, descricao, duracaoDias]
             );
             return { status: 201, desc: { mensagem: "Plano criado com sucesso." } };

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import CtrlPlano from '../ctrl/plano.js';
+import CtrlPlano from '../ctrl/ctrl-plano.js';
 
 const router = Router();
 const ctrl = new CtrlPlano();

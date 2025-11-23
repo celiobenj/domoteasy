@@ -6,7 +6,7 @@ class Pagamento {
         try {
             // 1. Registrar o pagamento
             await db.run(
-                `INSERT INTO pagamentos (id_assinatura, valor_pago, status, id_transacao_gateway) 
+                `INSERT INTO pagamentos (idAssinatura, valorPago, status, idTransacaoGateway) 
                  VALUES (?, ?, 'aprovado', ?)`,
                 [idAssinatura, valorPago, idTransacao]
             );

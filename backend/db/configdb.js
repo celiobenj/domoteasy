@@ -22,8 +22,8 @@ async function setupDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
-            senha_hash TEXT NOT NULL,
-            tipo_assinatura TEXT -- Pode ser null se o usuário for "free" ou sem plano
+            senhaHash TEXT NOT NULL,
+            tipoAssinatura TEXT -- Pode ser null se o usuário for "free" ou sem plano
         )
     `);
 
@@ -44,14 +44,14 @@ async function setupDatabase() {
     await db.exec(`
         CREATE TABLE IF NOT EXISTS assinaturas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_usuario INTEGER NOT NULL UNIQUE, -- Garante que 1 usuário só tem 1 assinatura ativa
-            id_plano INTEGER NOT NULL,
-            data_inicio TEXT NOT NULL, -- SQLite guarda datas como TEXT (ISO8601) ou INTEGER
-            data_expiracao TEXT NOT NULL,
+            idUsuario INTEGER NOT NULL UNIQUE, -- Garante que 1 usuário só tem 1 assinatura ativa
+            idPlano INTEGER NOT NULL,
+            dataInicio TEXT NOT NULL, -- SQLite guarda datas como TEXT (ISO8601) ou INTEGER
+            dataExpiracao TEXT NOT NULL,
             status TEXT NOT NULL CHECK(status IN ('ativa', 'inativa', 'cancelada')),
             
-            FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE,
-            FOREIGN KEY (id_plano) REFERENCES planos(id)
+            FOREIGN KEY (idUsuario) REFERENCES usuarios(id) ON DELETE CASCADE,
+            FOREIGN KEY (idPlano) REFERENCES planos(id)
         )
     `);
 
@@ -60,13 +60,13 @@ async function setupDatabase() {
     await db.exec(`
         CREATE TABLE IF NOT EXISTS pagamentos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_assinatura INTEGER NOT NULL,
-            valor_pago REAL NOT NULL,
-            data_pagamento TEXT DEFAULT CURRENT_TIMESTAMP,
+            idAssinatura INTEGER NOT NULL,
+            valorPago REAL NOT NULL,
+            dataPagamento TEXT DEFAULT CURRENT_TIMESTAMP,
             status TEXT NOT NULL,
-            id_transacao_gateway TEXT, -- ID que vem do PayPal/Stripe/PagSeguro
+            idTransacaoGateway TEXT, -- ID que vem do PayPal/Stripe/PagSeguro
             
-            FOREIGN KEY (id_assinatura) REFERENCES assinaturas(id)
+            FOREIGN KEY (idAssinatura) REFERENCES assinaturas(id)
         )
     `);
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import CtrlAssinatura from '../ctrl/assinatura.js';
+import CtrlAssinatura from '../ctrl/ctrl-assinatura.js';
 import verificarToken from '../sec/authMiddleware.js'; // Importante para pegar o ID do user
 
 const router = Router();
