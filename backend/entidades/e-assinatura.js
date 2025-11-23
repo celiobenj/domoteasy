@@ -24,12 +24,12 @@ class Assinatura {
             const dataExpiracao = new Date();
             
             // LOG DE DEBUG: Verificar se duracao_dias existe
-            if (!plano.duracao_dias) {
+            if (!plano.duracaoDias) {
                 console.error("DEBUG: Campo duracaoDias inválido ou inexistente:", plano);
                 throw new Error("Configuração do plano inválida (sem duração).");
             }
 
-            dataExpiracao.setDate(dataInicio.getDate() + plano.duracao_dias);
+            dataExpiracao.setDate(dataInicio.getDate() + plano.duracaoDias);
 
             // 4. Inserir Assinatura
             const statusInicial = 'inativa'; 

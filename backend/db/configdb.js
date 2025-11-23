@@ -34,7 +34,7 @@ async function setupDatabase() {
             nome TEXT NOT NULL,
             valor REAL NOT NULL, -- float no diagrama vira REAL no SQLite
             descricao TEXT,
-            duracao_dias INTEGER NOT NULL
+            duracaoDias INTEGER NOT NULL
         )
     `);
 
