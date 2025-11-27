@@ -1,6 +1,5 @@
 import Usuario from '../entidades/e-usuario.js';
 
-// Validation helpers (The Brain - Business Logic)
 const validarEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -24,7 +23,6 @@ class CtrlUsuario {
     async cadastro(req, res) {
         const { nome, email, senha } = req.body;
 
-        // Strong validation in controller (MVC - The Brain)
         if (!email || !validarEmail(email)) {
             return res.status(400).json({ desc: { erro: "Email inválido." } });
         }
@@ -53,7 +51,6 @@ class CtrlUsuario {
         const id = req.usuario.id;
         const { senhaAtual, novaSenha } = req.body;
 
-        // Validate new password if provided
         if (novaSenha) {
             const validacaoSenha = validarSenha(novaSenha);
             if (!validacaoSenha.valida) {
