@@ -6,16 +6,16 @@ export const useAdminTechnicians = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        loadPendingTechnicians();
+        loadTechnicians();
     }, []);
 
-    const loadPendingTechnicians = async () => {
+    const loadTechnicians = async () => {
         try {
             setLoading(true);
-            const data = await TechnicianService.getPendingTechnicians();
+            const data = await TechnicianService.getAll();
             setTechnicians(data);
         } catch (error) {
-            console.error('Error loading pending technicians:', error);
+            console.error('Error loading technicians:', error);
         } finally {
             setLoading(false);
         }
@@ -23,29 +23,45 @@ export const useAdminTechnicians = () => {
 
     const handleApprove = async (id: string) => {
         try {
-            // Optimistic update: remove from list immediately
-            setTechnicians(prev => prev.filter(t => t.id !== id));
-
-            // Call service to update status
-            await TechnicianService.updateTechnicianStatus(id, 'active');
+            setLoading(true);
+            await TechnicianService.approve(id);
+            await loadTechnicians();
         } catch (error) {
             console.error('Error approving technician:', error);
-            // Reload list on error
-            loadPendingTechnicians();
+            setLoading(false);
         }
     };
 
     const handleReject = async (id: string) => {
         try {
-            // Optimistic update: remove from list immediately
-            setTechnicians(prev => prev.filter(t => t.id !== id));
-
-            // Call service to update status
-            await TechnicianService.updateTechnicianStatus(id, 'rejected');
+            setLoading(true);
+            await TechnicianService.reject(id);
+            await loadTechnicians();
         } catch (error) {
             console.error('Error rejecting technician:', error);
-            // Reload list on error
-            loadPendingTechnicians();
+            setLoading(false);
+        }
+    };
+
+    const handleDeactivate = async (id: string) => {
+        try {
+            setLoading(true);
+            await TechnicianService.deactivate(id);
+            await loadTechnicians();
+        } catch (error) {
+            console.error('Error deactivating technician:', error);
+            setLoading(false);
+        }
+    };
+
+    const handleReactivate = async (id: string) => {
+        try {
+            setLoading(true);
+            await TechnicianService.reactivate(id);
+            await loadTechnicians();
+        } catch (error) {
+            console.error('Error reactivating technician:', error);
+            setLoading(false);
         }
     };
 
@@ -54,5 +70,7 @@ export const useAdminTechnicians = () => {
         loading,
         handleApprove,
         handleReject,
+        handleDeactivate,
+        handleReactivate,
     };
 };

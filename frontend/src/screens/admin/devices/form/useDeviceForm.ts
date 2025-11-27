@@ -30,8 +30,14 @@ export const useDeviceForm = () => {
 
         try {
             setLoading(true);
-            const devices = await DeviceService.getAdminDevices();
-            const device = devices.find(d => d.id === deviceId);
+            const id = Number(deviceId);
+            if (isNaN(id)) {
+                Alert.alert('Erro', 'ID inválido.');
+                router.back();
+                return;
+            }
+
+            const device = await DeviceService.getById(id);
 
             if (device) {
                 setName(device.name);
@@ -88,7 +94,13 @@ export const useDeviceForm = () => {
             };
 
             if (isEditMode && deviceId) {
-                await DeviceService.updateDevice(deviceId, deviceData);
+                const id = Number(deviceId);
+                if (isNaN(id)) {
+                    Alert.alert('Erro', 'ID inválido.');
+                    return;
+                }
+
+                await DeviceService.update(id, deviceData);
                 Alert.alert(
                     'Sucesso',
                     'Dispositivo atualizado com sucesso!',

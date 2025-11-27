@@ -226,6 +226,37 @@ export const DeviceService = {
     },
 
     /**
+     * Get a device by ID for admin CMS
+     * @param id Device ID
+     * @returns Promise with device or null
+     */
+    async getById(id: number): Promise<Device | null> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const device = adminDevicesData.find(d => d.id === id.toString());
+        return device || null;
+    },
+
+    /**
+     * Update a device
+     * @param id Device ID
+     * @param data Device data
+     */
+    async update(id: number, data: Omit<Device, 'id'>): Promise<void> {
+        console.log("Mock Update:", data);
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        const deviceIndex = adminDevicesData.findIndex(device => device.id === id.toString());
+        if (deviceIndex !== -1) {
+            adminDevicesData[deviceIndex] = {
+                ...adminDevicesData[deviceIndex],
+                ...data,
+            };
+        }
+    },
+
+    /**
      * Create a new device
      * @param data Device data without ID
      * @returns Promise with created device

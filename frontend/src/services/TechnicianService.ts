@@ -115,21 +115,61 @@ export const TechnicianService = {
         return techniciansData.filter(t => t.status === 'pending');
     },
 
-    async updateTechnicianStatus(
-        id: string,
-        status: 'active' | 'rejected'
-    ): Promise<Technician | undefined> {
+    async approve(id: string): Promise<Technician | undefined> {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) {
-            return undefined;
-        }
+        if (technicianIndex === -1) return undefined;
 
         techniciansData[technicianIndex] = {
             ...techniciansData[technicianIndex],
-            status,
+            status: 'active',
+        };
+
+        return techniciansData[technicianIndex];
+    },
+
+    async reject(id: string): Promise<Technician | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const technicianIndex = techniciansData.findIndex(t => t.id === id);
+        if (technicianIndex === -1) return undefined;
+
+        techniciansData[technicianIndex] = {
+            ...techniciansData[technicianIndex],
+            status: 'rejected',
+        };
+
+        return techniciansData[technicianIndex];
+    },
+
+    async deactivate(id: string): Promise<Technician | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const technicianIndex = techniciansData.findIndex(t => t.id === id);
+        if (technicianIndex === -1) return undefined;
+
+        techniciansData[technicianIndex] = {
+            ...techniciansData[technicianIndex],
+            status: 'inactive',
+        };
+
+        return techniciansData[technicianIndex];
+    },
+
+    async reactivate(id: string): Promise<Technician | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const technicianIndex = techniciansData.findIndex(t => t.id === id);
+        if (technicianIndex === -1) return undefined;
+
+        techniciansData[technicianIndex] = {
+            ...techniciansData[technicianIndex],
+            status: 'active',
         };
 
         return techniciansData[technicianIndex];

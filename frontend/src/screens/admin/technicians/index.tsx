@@ -13,6 +13,8 @@ export default function TechnicianApprovalScreen() {
         loading,
         handleApprove,
         handleReject,
+        handleDeactivate,
+        handleReactivate,
     } = useAdminTechnicians();
 
     if (loading) {
@@ -30,26 +32,59 @@ export default function TechnicianApprovalScreen() {
                     <Text style={styles.technicianName}>{item.name}</Text>
                     <Text style={styles.technicianSpecialty}>{item.specialty}</Text>
                 </View>
-                <View style={styles.pendingBadge}>
-                    <Text style={styles.pendingBadgeText}>Pendente</Text>
+                <View style={[
+                    styles.pendingBadge,
+                    item.status === 'active' && { backgroundColor: theme.colors.success },
+                    (item.status === 'inactive' || item.status === 'rejected') && { backgroundColor: theme.colors.error }
+                ]}>
+                    <Text style={styles.pendingBadgeText}>
+                        {item.status === 'pending' && 'Pendente'}
+                        {item.status === 'active' && 'Ativo'}
+                        {item.status === 'inactive' && 'Inativo'}
+                        {item.status === 'rejected' && 'Rejeitado'}
+                    </Text>
                 </View>
             </View>
 
             <View style={styles.actionsContainer}>
-                <TouchableOpacity
-                    style={[styles.actionButton, styles.approveButton]}
-                    onPress={() => handleApprove(item.id)}
-                    activeOpacity={0.8}
-                >
-                    <Text style={styles.actionButtonText}>Aprovar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.actionButton, styles.rejectButton]}
-                    onPress={() => handleReject(item.id)}
-                    activeOpacity={0.8}
-                >
-                    <Text style={styles.actionButtonText}>Rejeitar</Text>
-                </TouchableOpacity>
+                {item.status === 'pending' && (
+                    <>
+                        <TouchableOpacity
+                            style={[styles.actionButton, styles.approveButton]}
+                            onPress={() => handleApprove(item.id)}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.actionButtonText}>Aprovar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.actionButton, styles.rejectButton]}
+                            onPress={() => handleReject(item.id)}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.actionButtonText}>Rejeitar</Text>
+                        </TouchableOpacity>
+                    </>
+                )}
+
+                {item.status === 'active' && (
+                    <TouchableOpacity
+                        style={[styles.actionButton, { backgroundColor: '#757575' }]} // Gray for Deactivate
+                        onPress={() => handleDeactivate(item.id)}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={styles.actionButtonText}>Desativar</Text>
+                    </TouchableOpacity>
+                )}
+
+                {(item.status === 'inactive' || item.status === 'rejected') && (
+                    <TouchableOpacity
+                        style={[styles.actionButton, { backgroundColor: theme.colors.success }]}
+                        onPress={() => handleReactivate(item.id)}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={styles.actionButtonText}>Reativar</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
