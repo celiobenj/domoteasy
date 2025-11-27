@@ -1,3 +1,5 @@
+import api from './api';
+
 export interface Technician {
     id: string;
     name: string;
@@ -8,6 +10,35 @@ export interface Technician {
     description: string;
     avatar?: string;
     status: 'pending' | 'active' | 'rejected' | 'inactive';
+}
+
+type BackendStatus = 'pendente' | 'ativo' | 'reprovado' | 'inativo';
+
+function mapBackendStatusToFrontend(status: BackendStatus | string | undefined): Technician['status'] {
+    switch (status) {
+        case 'pendente':
+            return 'pending';
+        case 'reprovado':
+            return 'rejected';
+        case 'inativo':
+            return 'inactive';
+        case 'ativo':
+        default:
+            return 'active';
+    }
+}
+
+function mapBackendTechnician(t: any): Technician {
+    return {
+        id: String(t.id),
+        name: t.nome ?? '',
+        specialty: t.especialidade ?? '',
+        rating: 0,
+        email: t.email ?? '',
+        phone: t.telefone ?? '',
+        description: t.especialidade ?? '',
+        status: mapBackendStatusToFrontend(t.status as BackendStatus),
+    };
 }
 
 const MOCK_TECHNICIANS: Technician[] = [
@@ -93,95 +124,66 @@ const MOCK_TECHNICIANS: Technician[] = [
     },
 ];
 
-// In-memory storage to simulate persistence during the session
+// In-memory storage (fallback only, not used with backend)
 let techniciansData = [...MOCK_TECHNICIANS];
 
 export const TechnicianService = {
     async getAll(): Promise<Technician[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        return techniciansData;
+        try {
+            const response = await api.get('/tecnicos');
+            const data = response.data as any[];
+            return data.map(mapBackendTechnician);
+        } catch (error) {
+            console.error('Erro ao listar técnicos, usando mock:', error);
+            return techniciansData;
+        }
     },
 
     async getById(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return techniciansData.find(t => t.id === id);
+        try {
+            const response = await api.get(`/tecnicos/id/${id}`);
+            return mapBackendTechnician(response.data);
+        } catch (error: any) {
+            if (error?.response?.status === 404) {
+                return undefined;
+            }
+            console.error('Erro ao buscar técnico, usando mock:', error);
+            return techniciansData.find(t => t.id === id);
+        }
     },
 
     async getPendingTechnicians(): Promise<Technician[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // Backend não possui rota específica para pendentes.
+        // Mantemos apenas fallback local.
         return techniciansData.filter(t => t.status === 'pending');
     },
 
     async approve(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) return undefined;
-
-        techniciansData[technicianIndex] = {
-            ...techniciansData[technicianIndex],
-            status: 'active',
-        };
-
-        return techniciansData[technicianIndex];
+        await api.post('/admin/profissionais/status', { idTecnico: id, acao: 'aprovar' });
+        return this.getById(id);
     },
 
     async reject(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) return undefined;
-
-        techniciansData[technicianIndex] = {
-            ...techniciansData[technicianIndex],
-            status: 'rejected',
-        };
-
-        return techniciansData[technicianIndex];
+        await api.post('/admin/profissionais/status', { idTecnico: id, acao: 'reprovar' });
+        return this.getById(id);
     },
 
     async deactivate(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) return undefined;
-
-        techniciansData[technicianIndex] = {
-            ...techniciansData[technicianIndex],
-            status: 'inactive',
-        };
-
-        return techniciansData[technicianIndex];
+        await api.post('/admin/profissionais/status', { idTecnico: id, acao: 'desativar' });
+        return this.getById(id);
     },
 
     async reactivate(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) return undefined;
-
-        techniciansData[technicianIndex] = {
-            ...techniciansData[technicianIndex],
-            status: 'active',
-        };
-
-        return techniciansData[technicianIndex];
+        await api.post('/admin/profissionais/status', { idTecnico: id, acao: 'reativar' });
+        return this.getById(id);
     },
 
     async updateTechnicianData(
         id: string,
         data: Partial<Technician>
     ): Promise<Technician | undefined> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
+        // Não há endpoint específico para edição de dados de contato no backend admin.
+        // Mantemos apenas atualização no mock local.
         const technicianIndex = techniciansData.findIndex(t => t.id === id);
         if (technicianIndex === -1) {
             return undefined;
@@ -194,13 +196,10 @@ export const TechnicianService = {
 
         return techniciansData[technicianIndex];
     },
+
     async delete(id: string): Promise<boolean> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const initialLength = techniciansData.length;
-        techniciansData = techniciansData.filter(t => t.id !== id);
-
-        return techniciansData.length < initialLength;
+        // Não há endpoint de deleção; usamos "reprovar" como equivalente.
+        await api.post('/admin/profissionais/status', { idTecnico: id, acao: 'reprovar' });
+        return true;
     },
 };

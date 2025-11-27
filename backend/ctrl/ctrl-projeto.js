@@ -15,5 +15,12 @@ class CtrlProjeto {
         const result = await projeto.listarPorUsuario(idUsuario);
         res.status(result.status).json(result.desc);
     }
+
+    async atualizarItens(req, res) {
+        const { idProjeto, itens } = req.body;
+        const projeto = new Projeto();
+        const result = await projeto.atualizarItens(idProjeto, itens);
+        res.status(result.status).json(result.desc);
+    }
 }
 export default CtrlProjeto;

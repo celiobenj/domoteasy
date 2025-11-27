@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from './api';
 
 export interface ProjectData {
     type: 'house' | 'apartment';
@@ -30,30 +31,11 @@ export interface Item extends Device {
     selected: boolean;
 }
 
-// Mock Project Data
-const MOCK_PROJECTS: Project[] = [
-    {
-        id: 'proj1',
-        name: 'Casa Inteligente',
-        status: 'in-progress',
-        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days ago
-    },
-    {
-        id: 'proj2',
-        name: 'Apartamento Centro',
-        status: 'completed',
-        createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString() // 14 days ago
-    },
-    {
-        id: 'proj3',
-        name: 'Escritório Smart',
-        status: 'draft',
-        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() // 2 days ago
-    },
-];
+// Mock Project Data (fallback only)
+const MOCK_PROJECTS: Project[] = [];
 
-// Mock Device Data
-const MOCK_DEVICES: Device[] = [
+// Mock Device Data (no longer used for recommendations)
+const MOCK_DEVICES: Device[] = [];
     {
         id: '1',
         name: 'Lâmpada Inteligente',
@@ -170,48 +152,92 @@ const MOCK_DEVICES: Device[] = [
 
 export const ProjectService = {
     async create(data: ProjectData): Promise<Project> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        const nome = `Projeto ${data.type === 'house' ? 'Casa' : 'Apartamento'}`;
+        const descricao = `Cômodos: ${data.rooms.join(', ') || 'Não informado'} | Orçamento: R$ ${data.budgetLimit.toFixed(2)}`;
+        const preferencias = JSON.stringify(data);
+
+        const response = await api.post('/projetos', {
+            nome,
+            descricao,
+            preferencias,
+            itens: [],
+        });
+
+        const result = response.data as { id: number; mensagem?: string };
 
         const newProject: Project = {
-            id: Math.random().toString(36).substr(2, 9),
-            name: `Projeto ${data.type === 'house' ? 'Casa' : 'Apartamento'}`,
+            id: String(result.id),
+            name: nome,
             status: 'draft',
             data,
             createdAt: new Date().toISOString(),
         };
 
-        // In a real app, we would save this to the backend
-        console.log('Project created:', newProject);
         return newProject;
     },
 
     async getRecommendations(projectId: string): Promise<Device[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // Reutiliza dispositivos reais cadastrados pelo admin
+        const { DeviceService } = await import('./DeviceService');
+        const all = await DeviceService.getAllDevices();
 
-        // Return random subset of mock devices for demo purposes
-        // In a real app, this would depend on the project data (rooms, budget)
-        return MOCK_DEVICES.filter(() => Math.random() > 0.3);
+        // Mapeia DeviceDetail -> Device (para a tela de recomendações)
+        return all.map((d) => ({
+            id: d.id,
+            name: d.name,
+            brand: d.brand,
+            price: d.price,
+            category: d.category,
+            image: d.image,
+            description: d.description,
+            specs: d.specs,
+            purchaseLink: d.purchaseLink ?? '',
+        }));
     },
 
     async saveBudget(projectId: string, items: Item[]): Promise<void> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
         const selectedItems = items.filter(i => i.selected);
-        console.log(`Budget saved for project ${projectId}:`, selectedItems);
-
-        // Store locally for demo (optional)
         await AsyncStorage.setItem(`budget_${projectId}`, JSON.stringify(selectedItems));
     },
 
-    async listByUser(): Promise<Project[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 600));
+    async updateItems(projectId: string, deviceIds: string[]): Promise<void> {
+        await api.post('/projetos/itens', {
+            idProjeto: Number(projectId),
+            itens: deviceIds.map(id => Number(id)),
+        });
+    },
 
-        // In a real app, this would fetch from the backend using the authenticated user's ID
-        // For now, return mock projects
-        return MOCK_PROJECTS;
+    async generateBudget(projectId: string): Promise<{ id: string; valorTotal: number }> {
+        const response = await api.post('/orcamentos/gerar', {
+            idProjeto: Number(projectId),
+        });
+        const data = response.data as { id: number; valorTotal: number };
+        return { id: String(data.id), valorTotal: data.valorTotal };
+    },
+
+    async listByUser(): Promise<Project[]> {
+        try {
+            const response = await api.get('/projetos');
+            const projetos = response.data as any[];
+
+            return projetos.map((p) => {
+                const nome = p.nome ?? 'Projeto';
+                const createdAt: string = p.dataCriacao
+                    ? new Date(p.dataCriacao).toISOString()
+                    : new Date().toISOString();
+
+                const project: Project = {
+                    id: String(p.id),
+                    name: nome,
+                    status: 'draft',
+                    createdAt,
+                };
+
+                return project;
+            });
+        } catch (error) {
+            console.error('Erro ao listar projetos do usuário, usando mock:', error);
+            return MOCK_PROJECTS;
+        }
     }
 };

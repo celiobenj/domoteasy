@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from './api';
 
 export interface Plan {
     id: string;
@@ -9,61 +9,78 @@ export interface Plan {
     recommended?: boolean;
 }
 
-const PLANS: Plan[] = [
-    {
-        id: 'monthly',
-        name: 'Premium Mensal',
-        price: 29.99,
-        period: 'monthly',
-        features: [
-            'Todos os benefícios do plano Comum',
-            'Assistência técnica 24/7',
-            'Tutoriais de instalação'
-        ]
-    },
-    {
-        id: 'yearly',
-        name: 'Premium Anual',
-        price: 24.99, // Preço por mês
-        period: 'yearly',
-        features: [
-            'Todos os benefícios do plano Premium Mensal',
-            'Maior custo benefício'
-        ],
-        recommended: true
+interface BackendPlan {
+    id: number;
+    nome: string;
+    valor: number;
+    descricao?: string;
+    duracaoDias?: number;
+}
+
+function mapBackendPlan(p: BackendPlan): Plan {
+    let period: 'monthly' | 'yearly' = 'monthly';
+    if (p.duracaoDias && p.duracaoDias >= 365) {
+        period = 'yearly';
     }
-];
+
+    const features: string[] = p.descricao
+        ? p.descricao.split(/\r?\n/).filter(Boolean)
+        : ['Acesso aos recursos do plano Premium'];
+
+    return {
+        id: String(p.id),
+        name: p.nome,
+        price: p.valor,
+        period,
+        features,
+        recommended: period === 'yearly',
+    };
+}
 
 export const SubscriptionService = {
     async getPlans(): Promise<Plan[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        return PLANS;
+        const response = await api.get<BackendPlan[]>('/planos');
+        return response.data.map(mapBackendPlan);
     },
 
-    async subscribe(planId: string, paymentData: any): Promise<void> {
-        // Simula uma chamada de API para processar o pagamento e assinar
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                console.log(`Assinado plano ${planId} com dados de pagamento:`, paymentData);
-                resolve();
-            }, 2000);
+    /**
+     * Cria assinatura e registra pagamento no backend.
+     */
+    async subscribe(plan: Plan): Promise<void> {
+        // 1) Criar assinatura vinculada ao plano
+        const contratarRes = await api.post('/assinatura/contratar', {
+            idPlano: Number(plan.id),
+        });
+
+        const assinatura = contratarRes.data as { id: number };
+        const fakeTransactionId = `TX-${Date.now()}`;
+
+        // 2) Registrar pagamento e ativar assinatura
+        await api.post('/pagamentos', {
+            idAssinatura: assinatura.id,
+            valor: plan.price,
+            idTransacao: fakeTransactionId,
         });
     },
 
     async cancelSubscription(): Promise<void> {
-        // Simula cancelamento
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                console.log('Assinatura cancelada');
-                resolve();
-            }, 1000);
-        });
+        await api.patch('/assinatura/cancelar');
     },
 
-    async getSubscriptionStatus(): Promise<string> {
-        // Simula verificação de status
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return 'free';
-    }
+    async getSubscriptionStatus(): Promise<'free' | 'premium'> {
+        try {
+            const response = await api.get('/assinatura/meu-plano');
+            const assinatura = response.data as { status?: string };
+            if (assinatura && assinatura.status === 'ativa') {
+                return 'premium';
+            }
+            return 'free';
+        } catch (error: any) {
+            // 404 = sem assinatura ainda
+            if (error?.response?.status === 404) {
+                return 'free';
+            }
+            throw error;
+        }
+    },
 };

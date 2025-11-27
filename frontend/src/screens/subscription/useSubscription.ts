@@ -46,16 +46,18 @@ export const useSubscription = () => {
     };
 
     const handleSubscribe = async () => {
-        // TESTING MODE: Removed all validations for easy premium testing
-        // No card validation, no Luhn algorithm, no field checks
+        if (!selectedPlan) {
+            Alert.alert('Selecione um plano', 'Por favor, escolha um plano para continuar.');
+            return;
+        }
 
         try {
             setLoading(true);
 
-            // Simulate API delay for realism (very short)
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Chama backend para criar assinatura + pagamento
+            await SubscriptionService.subscribe(selectedPlan);
 
-            // Immediately upgrade to premium status
+            // Atualiza status local para Premium
             await updateSubscriptionStatus('premium');
 
             // Show success notification

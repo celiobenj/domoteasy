@@ -1,3 +1,5 @@
+import api from './api';
+
 export interface User {
     id: string;
     name: string;
@@ -90,8 +92,22 @@ const MOCK_USERS: User[] = [
     },
 ];
 
-// In-memory storage to simulate persistence during the session
+// In-memory storage to simulate persistence during the session (fallback only)
 let usersData = [...MOCK_USERS];
+
+function mapBackendUser(u: any): User {
+    const tipoAssinatura: string = (u.tipoAssinatura || '').toLowerCase();
+    const isPremium = tipoAssinatura.includes('premium');
+
+    return {
+        id: String(u.id),
+        name: u.nome ?? '',
+        email: u.email ?? '',
+        role: 'user',
+        status: 'active',
+        subscriptionType: isPremium ? 'premium' : 'common',
+    };
+}
 
 export const UserService = {
     /**
@@ -100,19 +116,32 @@ export const UserService = {
      * @returns Promise with array of users
      */
     async getAllUsers(search?: string): Promise<User[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
+        try {
+            const response = await api.get('/admin/usuarios');
+            let users = (response.data as any[]).map(mapBackendUser);
 
-        if (!search || search.trim() === '') {
-            return usersData;
+            if (search && search.trim() !== '') {
+                const lowerSearch = search.toLowerCase();
+                users = users.filter(
+                    user =>
+                        user.name.toLowerCase().includes(lowerSearch) ||
+                        user.email.toLowerCase().includes(lowerSearch)
+                );
+            }
+
+            return users;
+        } catch (error) {
+            console.error('Erro ao listar usuários admin, usando mock:', error);
+            if (!search || search.trim() === '') {
+                return usersData;
+            }
+            const lowerSearch = search.toLowerCase();
+            return usersData.filter(
+                user =>
+                    user.name.toLowerCase().includes(lowerSearch) ||
+                    user.email.toLowerCase().includes(lowerSearch)
+            );
         }
-
-        const lowerSearch = search.toLowerCase();
-        return usersData.filter(
-            user =>
-                user.name.toLowerCase().includes(lowerSearch) ||
-                user.email.toLowerCase().includes(lowerSearch)
-        );
     },
 
     /**
@@ -121,9 +150,13 @@ export const UserService = {
      * @returns Promise with user or undefined if not found
      */
     async getUserById(id: string): Promise<User | undefined> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return usersData.find(user => user.id === id);
+        try {
+            const all = await this.getAllUsers();
+            return all.find(user => user.id === id);
+        } catch (error) {
+            console.error('Erro ao buscar usuário admin, usando mock:', error);
+            return usersData.find(user => user.id === id);
+        }
     },
 
     /**
@@ -133,19 +166,22 @@ export const UserService = {
      * @returns Promise with updated user or undefined if not found
      */
     async updateUser(id: string, data: Partial<User>): Promise<User | undefined> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        try {
+            const patch: any = {};
 
-        const userIndex = usersData.findIndex(user => user.id === id);
-        if (userIndex === -1) {
+            if (data.name) patch.nome = data.name;
+            if (data.email) patch.email = data.email;
+            if (data.subscriptionType) {
+                patch.tipoAssinatura = data.subscriptionType === 'premium' ? 'Premium' : 'Comum';
+            }
+
+            await api.patch(`/admin/usuarios/${id}`, patch);
+
+            // Recarrega usuário para refletir mudanças
+            return this.getUserById(id);
+        } catch (error) {
+            console.error('Erro ao atualizar usuário admin:', error);
             return undefined;
         }
-
-        usersData[userIndex] = {
-            ...usersData[userIndex],
-            ...data,
-        };
-
-        return usersData[userIndex];
     },
 };

@@ -26,8 +26,9 @@ export const useBudget = () => {
             setLoading(true);
             if (projectId) {
                 await ProjectService.saveBudget(projectId, items);
+                // Gera orçamento oficial no backend
+                await ProjectService.generateBudget(projectId);
             }
-            // Navigate to home or success screen
             router.dismissAll();
             router.replace('/home');
         } catch (error) {
