@@ -7,7 +7,7 @@ import { useProfile } from './useProfile';
 import { theme } from '@/theme/theme';
 
 const ProfileScreen = () => {
-    const { userName, subscriptionStatus, handleGoBack, handleEditProfile, handleUpgrade, handleLogout } = useProfile();
+    const { userName, subscriptionStatus, isAdmin, handleGoBack, handleEditProfile, handleUpgrade, handleNavigateToAdmin, handleLogout } = useProfile();
 
     return (
         <View style={styles.container}>
@@ -25,6 +25,12 @@ const ProfileScreen = () => {
             </View>
 
             <View style={styles.actionsContainer}>
+                {isAdmin() && (
+                    <TouchableOpacity style={styles.actionButton} onPress={handleNavigateToAdmin}>
+                        <Text style={styles.actionButtonText}>Painel Admin</Text>
+                    </TouchableOpacity>
+                )}
+
                 <TouchableOpacity style={styles.actionButton} onPress={handleEditProfile}>
                     <Text style={styles.actionButtonText}>Editar perfil</Text>
                 </TouchableOpacity>

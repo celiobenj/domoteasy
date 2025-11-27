@@ -20,6 +20,7 @@ export interface UpdateProfileData {
 export interface AuthResponse {
   token: string;
   id?: string;
+  role?: 'user' | 'admin';
   erro?: string;
 }
 
@@ -55,7 +56,12 @@ export const authService = {
   async login(data: LoginData): Promise<AuthResponse> {
     try {
       const response = await api.post('/usuario/login', data);
-      return response.data as AuthResponse;
+      // MOCK: Simulate admin role for frontend testing (no backend changes)
+      const mockResponse = {
+        ...response.data,
+        role: 'admin' as const,
+      };
+      return mockResponse as AuthResponse;
     } catch (err: any) {
       if (err.response) {
         const status = err.response.status;
@@ -114,8 +120,18 @@ export const authService = {
     return await AsyncStorage.getItem('userName');
   },
 
+  async saveUserRole(role: 'user' | 'admin'): Promise<void> {
+    await AsyncStorage.setItem('userRole', role);
+  },
+
+  async getUserRole(): Promise<'user' | 'admin' | null> {
+    const role = await AsyncStorage.getItem('userRole');
+    return role as 'user' | 'admin' | null;
+  },
+
   async logout(): Promise<void> {
     await AsyncStorage.removeItem('authToken');
     await AsyncStorage.removeItem('userName');
+    await AsyncStorage.removeItem('userRole');
   },
 };

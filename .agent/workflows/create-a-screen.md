@@ -36,3 +36,4 @@ Generate the source code for the DomotEasy screen.
 
 4.  **Output Formatting:**
     * Delivers a clean, linted Markdown code block containing the full component code, ensuring it is reproducible and immediately usable in the established project architecture.
+5. Remember to add _layout.tsx to hide the header.
