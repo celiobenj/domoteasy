@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: theme.spacing.large,
     },
     planCard: {
-        backgroundColor: theme.colors.white, // Assuming white exists or using a light color
+        backgroundColor: theme.colors.white,
         borderRadius: 12,
         padding: 20,
         marginBottom: 15,

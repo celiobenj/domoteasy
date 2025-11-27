@@ -1,3 +1,3 @@
-import UserDetailScreen from '@/screens/admin/users/detail';
+import UserDetailScreen from '@/screens/FORM-GESTAO-USUARIOS/detail';
 
 export default UserDetailScreen;

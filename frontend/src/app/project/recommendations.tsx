@@ -1,1 +1,1 @@
-export { default } from '@/screens/project/recommendations';
+export { default } from '@/screens/FORM-RECOMENDACOES';

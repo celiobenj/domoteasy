@@ -1,1 +1,1 @@
-export { default } from '@/screens/signIn';
+export { default } from '@/screens/FORM-LOGIN';

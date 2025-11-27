@@ -1,1 +1,1 @@
-export { default } from '@/screens/editProfile';
+export { default } from '@/screens/FORM-GER.PERFIL';

@@ -1,3 +1,3 @@
-import UserListScreen from '@/screens/admin/users/list';
+import UserListScreen from '@/screens/FORM-GESTAO-USUARIOS/list';
 
 export default UserListScreen;

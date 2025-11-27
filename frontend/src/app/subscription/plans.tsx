@@ -1,1 +1,1 @@
-export { default } from '@/screens/subscription/plans';
+export { default } from '@/screens/FORM-PLANOS';

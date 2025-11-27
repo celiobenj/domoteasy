@@ -1,1 +1,1 @@
-export { default } from '@/screens/subscription/manage';
+export { default } from '@/screens/FORM-ASSINATURA';

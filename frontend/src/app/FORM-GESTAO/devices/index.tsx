@@ -1,3 +1,3 @@
-import DeviceListScreen from '@/screens/admin/devices/list';
+import DeviceListScreen from '@/screens/FORM-GESTAO-DISPOSITIVOS/list';
 
 export default DeviceListScreen;

@@ -1,1 +1,1 @@
-export { default } from '@/screens/devices/manual';
+export { default } from '@/screens/FORM-MANUAIS';

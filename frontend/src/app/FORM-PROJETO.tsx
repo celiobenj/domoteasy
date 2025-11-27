@@ -1,1 +1,1 @@
-export { default } from '@/screens/project/create';
+export { default } from '@/screens/FORM-PROJETO';

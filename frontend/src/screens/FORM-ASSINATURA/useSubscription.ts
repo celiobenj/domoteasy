@@ -54,8 +54,16 @@ export const useSubscription = () => {
         try {
             setLoading(true);
 
+            // Prepara dados de pagamento
+            const paymentData = {
+                cardNumber,
+                cardName,
+                cardExpiry,
+                cardCvv,
+            };
+
             // Chama backend para criar assinatura + pagamento
-            await SubscriptionService.subscribe(selectedPlan);
+            await SubscriptionService.subscribe(selectedPlan.id, paymentData);
 
             // Atualiza status local para Premium
             await updateSubscriptionStatus('premium');

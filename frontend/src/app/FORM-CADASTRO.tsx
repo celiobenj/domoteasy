@@ -1,1 +1,1 @@
-export { default } from '@/screens/signUp';
+export { default } from '@/screens/FORM-CADASTRO';

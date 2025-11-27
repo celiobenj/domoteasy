@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { styles } from '../styles';
-import { useSubscription } from '../useSubscription';
+import { styles } from './styles';
+import { useSubscription } from './useSubscription';
 import { theme } from '@/theme/theme';
 
 const ManageSubscriptionScreen = () => {
