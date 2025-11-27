@@ -1,3 +1,5 @@
+import api from './api';
+
 export interface Technician {
     id: string;
     name: string;
@@ -10,197 +12,109 @@ export interface Technician {
     status: 'pending' | 'active' | 'rejected' | 'inactive';
 }
 
-const MOCK_TECHNICIANS: Technician[] = [
-    {
-        id: '1',
-        name: 'João Silva',
-        specialty: 'Eletricista',
-        rating: 4.8,
-        email: 'joao.silva@email.com',
-        phone: '(11) 99999-1111',
-        description: 'Especialista em instalações residenciais e automação.',
-        status: 'active',
-    },
-    {
-        id: '2',
-        name: 'Maria Santos',
-        specialty: 'Técnica em Segurança',
-        rating: 4.9,
-        email: 'maria.santos@email.com',
-        phone: '(11) 99999-2222',
-        description: 'Instalação de câmeras, alarmes e fechaduras digitais.',
-        status: 'active',
-    },
-    {
-        id: '3',
-        name: 'Carlos Oliveira',
-        specialty: 'Integrador de Sistemas',
-        rating: 4.7,
-        email: 'carlos.oliveira@email.com',
-        phone: '(11) 99999-3333',
-        description: 'Configuração de hubs e assistentes virtuais.',
-        status: 'active',
-    },
-    {
-        id: '4',
-        name: 'Ana Pereira',
-        specialty: 'Eletricista',
-        rating: 4.5,
-        email: 'ana.pereira@email.com',
-        phone: '(11) 99999-4444',
-        description: 'Manutenção e reparos elétricos.',
-        status: 'active',
-    },
-    {
-        id: '5',
-        name: 'Pedro Costa',
-        specialty: 'Técnico em Redes',
-        rating: 4.6,
-        email: 'pedro.costa@email.com',
-        phone: '(11) 99999-5555',
-        description: 'Otimização de Wi-Fi e redes domésticas.',
-        status: 'active',
-    },
-    {
-        id: '6',
-        name: 'Roberto Alves',
-        specialty: 'Eletricista',
-        rating: 0,
-        email: 'roberto.alves@email.com',
-        phone: '(11) 99999-6666',
-        description: 'Instalações elétricas residenciais e comerciais.',
-        status: 'pending',
-    },
-    {
-        id: '7',
-        name: 'Juliana Campos',
-        specialty: 'Técnica em Automação',
-        rating: 0,
-        email: 'juliana.campos@email.com',
-        phone: '(11) 99999-7777',
-        description: 'Especialista em automação residencial completa.',
-        status: 'pending',
-    },
-    {
-        id: '8',
-        name: 'Fernando Lima',
-        specialty: 'Integrador de Sistemas',
-        rating: 0,
-        email: 'fernando.lima@email.com',
-        phone: '(11) 99999-8888',
-        description: 'Integração de sistemas de segurança e automação.',
-        status: 'pending',
-    },
-];
+// Backend response interface (Portuguese keys)
+interface BackendTechnician {
+    id?: string | number;
+    nome?: string;
+    especialidade?: string;
+    telefone?: string;
+    email?: string;
+}
 
-// In-memory storage to simulate persistence during the session
-let techniciansData = [...MOCK_TECHNICIANS];
+/**
+ * Adapter: Maps backend Portuguese data to frontend English interface
+ */
+const adaptBackendTechnician = (backendData: BackendTechnician): Technician => {
+    return {
+        id: String(backendData.id || ''),
+        name: backendData.nome || '',
+        specialty: backendData.especialidade || '',
+        phone: backendData.telefone || '',
+        email: backendData.email || '',
+        // Backend doesn't provide these fields yet - using defaults
+        rating: 0,
+        description: '',
+        avatar: undefined,
+        status: 'active', // Backend returns only active technicians
+    };
+};
 
 export const TechnicianService = {
     async getAll(): Promise<Technician[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        return techniciansData;
+        try {
+            const response = await api.get('/tecnicos');
+            // Backend returns data in response.data.desc (array)
+            const backendTechnicians = response.data?.desc || [];
+
+            // Map each backend technician to frontend format
+            return backendTechnicians.map(adaptBackendTechnician);
+        } catch (error) {
+            console.error('Error fetching technicians:', error);
+            // Return empty array on error to prevent UI crashes
+            return [];
+        }
     },
 
     async getById(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
+        // TODO: Implement backend endpoint - currently mock
         await new Promise(resolve => setTimeout(resolve, 500));
-        return techniciansData.find(t => t.id === id);
+
+        // Mock implementation - replace when backend ready
+        const mockTechnicians = await this.getAll();
+        return mockTechnicians.find(t => t.id === id);
     },
 
     async getPendingTechnicians(): Promise<Technician[]> {
-        // Simulate API delay
+        // TODO: Implement backend endpoint - currently mock
         await new Promise(resolve => setTimeout(resolve, 800));
-        return techniciansData.filter(t => t.status === 'pending');
+
+        // Mock implementation - backend should provide a /tecnicos/pendentes endpoint
+        const allTechnicians = await this.getAll();
+        return allTechnicians.filter(t => t.status === 'pending');
     },
 
     async approve(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
+        // TODO: Implement backend endpoint - currently mock
         await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) return undefined;
-
-        techniciansData[technicianIndex] = {
-            ...techniciansData[technicianIndex],
-            status: 'active',
-        };
-
-        return techniciansData[technicianIndex];
+        console.log('Mock: Approving technician', id);
+        return undefined;
     },
 
     async reject(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
+        // TODO: Implement backend endpoint - currently mock
         await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) return undefined;
-
-        techniciansData[technicianIndex] = {
-            ...techniciansData[technicianIndex],
-            status: 'rejected',
-        };
-
-        return techniciansData[technicianIndex];
+        console.log('Mock: Rejecting technician', id);
+        return undefined;
     },
 
     async deactivate(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
+        // TODO: Implement backend endpoint - currently mock
         await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) return undefined;
-
-        techniciansData[technicianIndex] = {
-            ...techniciansData[technicianIndex],
-            status: 'inactive',
-        };
-
-        return techniciansData[technicianIndex];
+        console.log('Mock: Deactivating technician', id);
+        return undefined;
     },
 
     async reactivate(id: string): Promise<Technician | undefined> {
-        // Simulate API delay
+        // TODO: Implement backend endpoint - currently mock
         await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) return undefined;
-
-        techniciansData[technicianIndex] = {
-            ...techniciansData[technicianIndex],
-            status: 'active',
-        };
-
-        return techniciansData[technicianIndex];
+        console.log('Mock: Reactivating technician', id);
+        return undefined;
     },
 
     async updateTechnicianData(
         id: string,
         data: Partial<Technician>
     ): Promise<Technician | undefined> {
-        // Simulate API delay
+        // TODO: Implement backend endpoint - currently mock
         await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const technicianIndex = techniciansData.findIndex(t => t.id === id);
-        if (technicianIndex === -1) {
-            return undefined;
-        }
-
-        techniciansData[technicianIndex] = {
-            ...techniciansData[technicianIndex],
-            ...data,
-        };
-
-        return techniciansData[technicianIndex];
+        console.log('Mock: Updating technician', id, data);
+        return undefined;
     },
+
     async delete(id: string): Promise<boolean> {
-        // Simulate API delay
+        // TODO: Implement backend endpoint - currently mock
         await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const initialLength = techniciansData.length;
-        techniciansData = techniciansData.filter(t => t.id !== id);
-
-        return techniciansData.length < initialLength;
+        console.log('Mock: Deleting technician', id);
+        return false;
     },
 };

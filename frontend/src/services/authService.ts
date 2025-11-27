@@ -28,18 +28,10 @@ export interface AuthResponse {
   erro?: string;
 }
 
-
 export interface ApiError {
   status: number;
   message: string;
 }
-
-// Helper function to map backend tipoAssinatura to frontend subscriptionStatus
-const mapSubscriptionStatus = (tipoAssinatura?: string): 'free' | 'premium' => {
-  if (!tipoAssinatura) return 'free';
-  return tipoAssinatura.toLowerCase().includes('premium') ? 'premium' : 'free';
-};
-
 
 export const authService = {
   async signUp(data: SignUpData): Promise<AuthResponse> {
@@ -50,15 +42,15 @@ export const authService = {
         senha: data.senha,
       });
 
-      // Backend returns: { status: 201, desc: { token: "...", id: number } }
-      const { token, id } = response.data.desc;
+      // Backend sends result.desc as response body directly
+      const { token, id } = response.data;
 
       // Fetch user info to get nome, email, and tipoAssinatura
       const infoResponse = await api.get('/usuario/info', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      const userInfo = infoResponse.data.desc;
+      const userInfo = infoResponse.data;
 
       return {
         token,
@@ -66,10 +58,13 @@ export const authService = {
         nome: userInfo.nome,
         email: userInfo.email,
         tipoAssinatura: userInfo.tipoAssinatura,
-        role: 'user', // Default role
+        role: 'user',
       };
     } catch (error: any) {
-      // Handle backend error responses
+      console.error('SignUp error:', error);
+      console.error('Response data:', error.response?.data);
+
+      // Backend sends errors directly in response.data.erro
       if (error.response?.data?.erro) {
         throw new Error(error.response.data.erro);
       } else if (error.response?.status === 409) {
@@ -89,15 +84,15 @@ export const authService = {
         senha: data.senha,
       });
 
-      // Backend returns: { status: 200, desc: { token: "...", id: number } }
-      const { token, id } = response.data.desc;
+      // Backend sends result.desc as response body directly
+      const { token, id } = response.data;
 
       // Fetch user info to get nome, email, and tipoAssinatura
       const infoResponse = await api.get('/usuario/info', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      const userInfo = infoResponse.data.desc;
+      const userInfo = infoResponse.data;
 
       return {
         token,
@@ -105,10 +100,13 @@ export const authService = {
         nome: userInfo.nome,
         email: userInfo.email,
         tipoAssinatura: userInfo.tipoAssinatura,
-        role: 'user', // Default role - can be enhanced later
+        role: 'user',
       };
     } catch (error: any) {
-      // Handle backend error responses
+      console.error('Login error:', error);
+      console.error('Response data:', error.response?.data);
+
+      // Backend sends errors directly in response.data.erro
       if (error.response?.data?.erro) {
         throw new Error(error.response.data.erro);
       } else if (error.response?.status === 401) {
@@ -131,8 +129,8 @@ export const authService = {
   async getUserName(): Promise<string> {
     try {
       const response = await api.get('/usuario/nome');
-      // Backend returns: { status: 200, desc: { nome: "..." } }
-      return response.data.desc.nome;
+      // Backend sends result.desc as response body directly
+      return response.data.nome;
     } catch (error: any) {
       if (error.message === 'Network Error') {
         throw new Error('Erro de conexão. Verifique sua internet.');

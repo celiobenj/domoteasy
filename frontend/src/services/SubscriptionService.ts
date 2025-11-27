@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import api from './api';
 
 export interface Plan {
     id: string;
@@ -9,40 +10,65 @@ export interface Plan {
     recommended?: boolean;
 }
 
-const PLANS: Plan[] = [
-    {
-        id: 'monthly',
-        name: 'Premium Mensal',
-        price: 29.99,
-        period: 'monthly',
-        features: [
-            'Todos os benefícios do plano Comum',
-            'Assistência técnica 24/7',
-            'Tutoriais de instalação'
-        ]
-    },
-    {
-        id: 'yearly',
-        name: 'Premium Anual',
-        price: 24.99, // Preço por mês
-        period: 'yearly',
-        features: [
-            'Todos os benefícios do plano Premium Mensal',
-            'Maior custo benefício'
-        ],
-        recommended: true
-    }
-];
+// Backend response interface (Portuguese keys)
+interface BackendPlan {
+    id?: string | number;
+    nome?: string;
+    valor?: number | string;
+    descricao?: string;
+    duracaoDias?: number;
+}
+
+/**
+ * Adapter: Maps backend Portuguese data to frontend English interface
+ */
+const adaptBackendPlan = (backendData: BackendPlan): Plan => {
+    // Ensure price is a number
+    const price = typeof backendData.valor === 'string'
+        ? parseFloat(backendData.valor) || 0
+        : backendData.valor || 0;
+
+    // Determine period based on duration (30 days = monthly, 365 = yearly)
+    const duration = backendData.duracaoDias || 30;
+    const period: 'monthly' | 'yearly' = duration >= 365 ? 'yearly' : 'monthly';
+
+    // Parse features from description (split by newline or comma)
+    const description = backendData.descricao || '';
+    const features = description
+        ? description.split(/[\n,]/).map(f => f.trim()).filter(f => f.length > 0)
+        : [];
+
+    // Yearly plans are recommended by default
+    const recommended = period === 'yearly';
+
+    return {
+        id: String(backendData.id || ''),
+        name: backendData.nome || '',
+        price: price,
+        period: period,
+        features: features,
+        recommended: recommended,
+    };
+};
 
 export const SubscriptionService = {
     async getPlans(): Promise<Plan[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        return PLANS;
+        try {
+            const response = await api.get('/planos');
+            // Backend returns data in response.data.desc (array)
+            const backendPlans = response.data?.desc || [];
+
+            // Map each backend plan to frontend format
+            return backendPlans.map(adaptBackendPlan);
+        } catch (error) {
+            console.error('Error fetching plans:', error);
+            // Return empty array on error to prevent UI crashes
+            return [];
+        }
     },
 
     async subscribe(planId: string, paymentData: any): Promise<void> {
-        // Simula uma chamada de API para processar o pagamento e assinar
+        // TODO: Implement backend endpoint - currently mock
         return new Promise((resolve) => {
             setTimeout(() => {
                 console.log(`Assinado plano ${planId} com dados de pagamento:`, paymentData);
@@ -52,7 +78,7 @@ export const SubscriptionService = {
     },
 
     async cancelSubscription(): Promise<void> {
-        // Simula cancelamento
+        // TODO: Implement backend endpoint - currently mock
         return new Promise((resolve) => {
             setTimeout(() => {
                 console.log('Assinatura cancelada');
@@ -62,7 +88,7 @@ export const SubscriptionService = {
     },
 
     async getSubscriptionStatus(): Promise<string> {
-        // Simula verificação de status
+        // TODO: Implement backend endpoint - currently mock
         await new Promise(resolve => setTimeout(resolve, 500));
         return 'free';
     }
