@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import api from './api';
 
 export interface SignUpData {
   nome: string;
@@ -30,41 +30,65 @@ export interface ApiError {
 }
 
 export const authService = {
+  /**
+   * Real signup against backend: POST /usuario/cadastro
+   */
   async signUp(data: SignUpData): Promise<AuthResponse> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Mock success response
-    return {
-      token: 'mock-jwt-token',
-      id: '1', // Mock ID consistent with TechnicianService
-      role: 'user',
-    };
+    try {
+      const response = await api.post('/usuario/cadastro', data);
+      // backend returns { token, id }
+      return response.data as AuthResponse;
+    } catch (error: any) {
+      const message = error?.response?.data?.erro || 'Erro ao realizar cadastro';
+      throw { status: error?.response?.status ?? 500, message } as ApiError;
+    }
   },
 
+  /**
+   * Real login against backend: POST /usuario/login
+   */
   async login(data: LoginData): Promise<AuthResponse> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await api.post('/usuario/login', data);
+      const auth = response.data as AuthResponse;
 
-    // Mock success response with admin role for testing
-    return {
-      token: 'mock-jwt-token',
-      id: '1', // Mock ID consistent with TechnicianService
-      role: 'admin',
-    };
+      // Definição simples de admin: email específico
+      if (!auth.role) {
+        auth.role = data.email === 'admin@domoteasy.com' ? 'admin' : 'user';
+      }
+
+      return auth;
+    } catch (error: any) {
+      const message = error?.response?.data?.erro || 'Erro ao fazer login';
+      throw { status: error?.response?.status ?? 500, message } as ApiError;
+    }
   },
 
+  /**
+   * Update password via PATCH /usuario/atualizar
+   */
   async updateProfile(data: UpdateProfileData): Promise<{ message: string }> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    return { message: 'Perfil atualizado com sucesso' };
+    try {
+      await api.patch('/usuario/atualizar', data);
+      return { message: 'Perfil atualizado com sucesso' };
+    } catch (error: any) {
+      const message = error?.response?.data?.erro || 'Erro ao atualizar perfil';
+      throw { status: error?.response?.status ?? 500, message } as ApiError;
+    }
   },
 
+  /**
+   * Get current user name from backend via GET /usuario/nome
+   */
   async getUserName(): Promise<string> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return 'Usuário Mock';
+    try {
+      const response = await api.get('/usuario/nome');
+      // backend e-usuario.obterNome returns { nome: string }
+      return response.data?.nome ?? '';
+    } catch (error: any) {
+      const message = error?.response?.data?.erro || 'Erro ao buscar nome do usuário';
+      throw { status: error?.response?.status ?? 500, message } as ApiError;
+    }
   },
 
   async saveToken(token: string): Promise<void> {

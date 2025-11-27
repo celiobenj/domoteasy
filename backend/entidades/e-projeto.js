@@ -31,5 +31,23 @@ class Projeto {
             return { status: 500, desc: { erro: "Erro ao listar projetos." } };
         }
     }
+
+    async atualizarItens(idProjeto, listaDispositivosIds) {
+        const db = await openDb();
+        try {
+            // Remove itens antigos e insere os novos
+            await db.run("DELETE FROM itens_projeto WHERE idProjeto = ?", [idProjeto]);
+
+            if (listaDispositivosIds && listaDispositivosIds.length > 0) {
+                for (const idDisp of listaDispositivosIds) {
+                    await db.run("INSERT INTO itens_projeto (idProjeto, idDispositivo) VALUES (?, ?)", [idProjeto, idDisp]);
+                }
+            }
+
+            return { status: 200, desc: { mensagem: "Itens atualizados com sucesso." } };
+        } catch (error) {
+            return { status: 500, desc: { erro: "Erro ao atualizar itens." } };
+        }
+    }
 }
 export default Projeto;

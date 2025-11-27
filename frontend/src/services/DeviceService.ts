@@ -1,3 +1,5 @@
+import api from './api';
+
 export interface DeviceDetail {
     id: string;
     name: string;
@@ -10,6 +12,7 @@ export interface DeviceDetail {
         label: string;
         value: string;
     }[];
+    purchaseLink?: string;
 }
 
 // Admin CMS Device Interface
@@ -31,7 +34,7 @@ export interface DeviceManual {
     pdfUrl?: string;
 }
 
-// Mock device data with detailed information
+// Mock device data with detailed information (fallback)
 const MOCK_DEVICES: DeviceDetail[] = [
     {
         id: '1',
@@ -154,8 +157,8 @@ const MOCK_MANUALS: { [key: string]: DeviceManual } = {
     },
 };
 
-// Mock admin devices data (separate from detailed devices for user view)
-const MOCK_ADMIN_DEVICES: Device[] = [
+// Mock admin devices data (no longer used; left only for fallback)
+const MOCK_ADMIN_DEVICES: Device[] = [];
     {
         id: '1',
         name: 'Lâmpada Inteligente',
@@ -188,30 +191,74 @@ const MOCK_ADMIN_DEVICES: Device[] = [
     },
 ];
 
-// In-memory storage to simulate persistence during the session
+// In-memory storage to simulate persistence durante a sessão (apenas para admin mock)
 let adminDevicesData = [...MOCK_ADMIN_DEVICES];
 
 export const DeviceService = {
     async getDeviceById(id: string): Promise<DeviceDetail | null> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        const device = MOCK_DEVICES.find(d => d.id === id);
-        return device || null;
+        try {
+            const devices = await this.getAllDevices();
+            return devices.find(d => d.id === id) || null;
+        } catch (error) {
+            console.error('Erro ao buscar dispositivo, usando mock:', error);
+            const device = MOCK_DEVICES.find(d => d.id === id);
+            return device || null;
+        }
     },
 
     async getDeviceManual(id: string): Promise<DeviceManual | null> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 300));
+        try {
+            const response = await api.get(`/conteudo/manual/${id}`);
+            const manualDb = response.data as any;
 
-        return MOCK_MANUALS[id] || null;
+            if (!manualDb) return null;
+
+            const manual: DeviceManual = {
+                id: String(manualDb.idDispositivo ?? id),
+                content: manualDb.descricao ?? 'Manual indisponível.',
+                videoUrl: manualDb.linkVideo ?? undefined,
+                pdfUrl: undefined,
+            };
+
+            return manual;
+        } catch (error: any) {
+            if (error?.response?.status === 404) {
+                return null;
+            }
+            console.error('Erro ao carregar manual, usando mock:', error);
+            return MOCK_MANUALS[id] || null;
+        }
     },
 
     async getAllDevices(): Promise<DeviceDetail[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 400));
+        try {
+            const response = await api.get('/conteudo/dispositivos');
+            const dispositivos = response.data as any[];
 
-        return MOCK_DEVICES;
+            if (!Array.isArray(dispositivos)) {
+                return [];
+            }
+
+            return dispositivos.map((d) => {
+                const detail: DeviceDetail = {
+                    id: String(d.id),
+                    name: d.nome ?? 'Dispositivo',
+                    brand: d.marca ?? 'Desconhecida',
+                    price: Number(d.preco ?? 0),
+                    category: 'Dispositivo',
+                    description: d.descricao ?? 'Dispositivo de automação residencial.',
+                    specs: [
+                        { label: 'Marca', value: d.marca ?? 'N/A' },
+                        { label: 'Preço', value: `R$ ${Number(d.preco ?? 0).toFixed(2)}` },
+                    ],
+                    purchaseLink: d.linkCompra ?? undefined,
+                };
+                return detail;
+            });
+        } catch (error) {
+            console.error('Erro ao listar dispositivos:', error);
+            return [];
+        }
     },
 
     // ===== ADMIN CMS Methods =====
@@ -221,9 +268,16 @@ export const DeviceService = {
      * @returns Promise with array of devices
      */
     async getAdminDevices(): Promise<Device[]> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 600));
-        return adminDevicesData;
+        // Reutiliza a mesma lista vinda do backend
+        const detalhes = await this.getAllDevices();
+        return detalhes.map((d) => ({
+            id: d.id,
+            name: d.name,
+            brand: d.brand,
+            price: d.price,
+            image: d.image,
+            purchaseLink: d.purchaseLink,
+        }));
     },
 
     /**
@@ -263,18 +317,26 @@ export const DeviceService = {
      * @returns Promise with created device
      */
     async createDevice(data: Omit<Device, 'id'>): Promise<Device> {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 800));
+        // Cria dispositivo + manual no backend
+        await api.post('/conteudo/admin/criar', {
+            dispositivo: {
+                nome: data.name,
+                marca: data.brand,
+                preco: data.price,
+                linkCompra: data.purchaseLink ?? null,
+            },
+            manual: {
+                descricao: '',
+                linkVideo: data.videoUrl ?? null,
+            },
+        });
 
-        // Generate pseudo-ID
-        const newId = (adminDevicesData.length + 1).toString();
-        const newDevice: Device = {
-            id: newId,
+        // Após criar, simplesmente retorna um objeto compatível;
+        // a lista será recarregada de /conteudo/dispositivos.
+        return {
+            id: '0',
             ...data,
         };
-
-        adminDevicesData.push(newDevice);
-        return newDevice;
     },
 
     /**

@@ -65,8 +65,18 @@ export const useRecommendations = () => {
         }
     };
 
-    const handleGenerateBudget = () => {
+    const handleGenerateBudget = async () => {
         const selectedItems = items.filter(i => i.selected);
+
+        // Sincroniza itens selecionados com o backend para permitir geração de orçamento
+        if (projectId) {
+            try {
+                await ProjectService.updateItems(projectId as string, selectedItems.map(i => i.id));
+            } catch (error) {
+                console.error('Erro ao atualizar itens do projeto:', error);
+            }
+        }
+
         router.push({
             pathname: '/project/budget',
             params: {

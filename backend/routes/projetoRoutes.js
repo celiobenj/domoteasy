@@ -7,5 +7,6 @@ const ctrl = new CtrlProjeto();
 
 router.post('/', verificarToken, ctrl.criar);
 router.get('/', verificarToken, ctrl.listarMeusProjetos);
+router.post('/itens', verificarToken, ctrl.atualizarItens);
 
 export default router;
