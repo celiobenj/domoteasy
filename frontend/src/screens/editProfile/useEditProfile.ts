@@ -5,6 +5,7 @@ import api from '../../services/api';
 import { isValidPassword, isValidPhone } from '../../utils/validation';
 import { authService } from '../../services/authService';
 import { TechnicianService } from '../../services/TechnicianService';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useEditProfile = () => {
     // Estados para os campos de senha
@@ -22,9 +23,16 @@ export const useEditProfile = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    const { userId } = useAuth();
+
     useEffect(() => {
+        if (!userId) {
+            // Se não houver ID, redireciona para o login ou welcome
+            router.replace('/welcome');
+            return;
+        }
         checkUserRole();
-    }, []);
+    }, [userId]);
 
     const checkUserRole = async () => {
         const role = await authService.getUserRole();
@@ -35,9 +43,9 @@ export const useEditProfile = () => {
     };
 
     const loadTechnicianData = async () => {
-        // MOCK: Load mock data for technician ID '1' (simulating current user)
-        // In a real app, we would get the ID from auth context or token
-        const tech = await TechnicianService.getById('1');
+        if (!userId) return;
+
+        const tech = await TechnicianService.getById(userId);
         if (tech) {
             setSpecialty(tech.specialty);
             setPhone(tech.phone);
@@ -56,6 +64,11 @@ export const useEditProfile = () => {
     };
 
     const handleUpdateProfile = async () => {
+        if (!userId) {
+            Alert.alert("Erro", "Usuário não identificado.");
+            return;
+        }
+
         setErrors({}); // Limpar erros anteriores
 
         // 1. Validações Básicas (Senha)
@@ -110,7 +123,7 @@ export const useEditProfile = () => {
 
             // Atualizar Dados de Técnico
             if (isTechnician) {
-                await TechnicianService.updateTechnicianData('1', {
+                await TechnicianService.updateTechnicianData(userId, {
                     specialty,
                     phone
                 });

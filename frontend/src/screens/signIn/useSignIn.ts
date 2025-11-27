@@ -16,7 +16,7 @@ export const useSignIn = () => {
     const [showSuccess, setShowSuccess] = useState(false);
 
     // Acessa o contexto de autenticação
-    const { setUserName, setUserRole } = useAuth();
+    const { setUserName, setUserRole, setUserId } = useAuth();
 
     // Handlers
     const handleInputChange = (field: keyof LoginData, value: string) => {
@@ -58,6 +58,12 @@ export const useSignIn = () => {
             if (response.role) {
                 await authService.saveUserRole(response.role);
                 setUserRole(response.role);
+            }
+
+            // Salvar e definir o ID do usuário
+            if (response.id) {
+                await authService.saveUserId(response.id);
+                setUserId(response.id);
             }
 
             // Busca o nome do usuário após login bem-sucedido

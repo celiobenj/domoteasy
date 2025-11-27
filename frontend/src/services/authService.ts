@@ -37,7 +37,7 @@ export const authService = {
     // Mock success response
     return {
       token: 'mock-jwt-token',
-      id: 'mock-user-id',
+      id: '1', // Mock ID consistent with TechnicianService
       role: 'user',
     };
   },
@@ -49,7 +49,7 @@ export const authService = {
     // Mock success response with admin role for testing
     return {
       token: 'mock-jwt-token',
-      id: 'mock-user-id',
+      id: '1', // Mock ID consistent with TechnicianService
       role: 'admin',
     };
   },
@@ -83,6 +83,14 @@ export const authService = {
     return await AsyncStorage.getItem('userName');
   },
 
+  async saveUserId(id: string): Promise<void> {
+    await AsyncStorage.setItem('userId', id);
+  },
+
+  async getUserId(): Promise<string | null> {
+    return await AsyncStorage.getItem('userId');
+  },
+
   async saveUserRole(role: 'user' | 'admin' | 'technician'): Promise<void> {
     await AsyncStorage.setItem('userRole', role);
   },
@@ -96,5 +104,6 @@ export const authService = {
     await AsyncStorage.removeItem('authToken');
     await AsyncStorage.removeItem('userName');
     await AsyncStorage.removeItem('userRole');
+    await AsyncStorage.removeItem('userId');
   },
 };
