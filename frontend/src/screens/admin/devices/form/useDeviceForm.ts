@@ -17,7 +17,8 @@ export const useDeviceForm = () => {
     const [price, setPrice] = useState('');
     const [image, setImage] = useState('');
     const [purchaseLink, setPurchaseLink] = useState('');
-    const [manualUrl, setManualUrl] = useState('');
+    const [videoUrl, setVideoUrl] = useState('');
+    const [pdfUrl, setPdfUrl] = useState('');
 
     useEffect(() => {
         if (isEditMode) {
@@ -45,7 +46,8 @@ export const useDeviceForm = () => {
                 setPrice(device.price.toString());
                 setImage(device.image || '');
                 setPurchaseLink(device.purchaseLink || '');
-                setManualUrl(device.manualUrl || '');
+                setVideoUrl(device.videoUrl || '');
+                setPdfUrl(device.pdfUrl || '');
             } else {
                 Alert.alert('Erro', 'Dispositivo não encontrado.');
                 router.back();
@@ -90,7 +92,8 @@ export const useDeviceForm = () => {
                 price: Number(price),
                 image: image.trim() || undefined,
                 purchaseLink: purchaseLink.trim() || undefined,
-                manualUrl: manualUrl.trim() || undefined,
+                videoUrl: videoUrl.trim() || undefined,
+                pdfUrl: pdfUrl.trim() || undefined,
             };
 
             if (isEditMode && deviceId) {
@@ -122,6 +125,35 @@ export const useDeviceForm = () => {
         }
     };
 
+    const handleDelete = async () => {
+        if (!deviceId) return;
+
+        Alert.alert(
+            'Confirmar Exclusão',
+            'Tem certeza que deseja excluir este dispositivo? Esta ação não pode ser desfeita.',
+            [
+                { text: 'Cancelar', style: 'cancel' },
+                {
+                    text: 'Excluir',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            setLoading(true);
+                            await DeviceService.deleteDevice(deviceId);
+                            Alert.alert('Sucesso', 'Dispositivo excluído com sucesso!', [
+                                { text: 'OK', onPress: () => router.back() }
+                            ]);
+                        } catch (error) {
+                            console.error('Error deleting device:', error);
+                            Alert.alert('Erro', 'Não foi possível excluir o dispositivo.');
+                            setLoading(false);
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     return {
         isEditMode,
         loading,
@@ -136,8 +168,11 @@ export const useDeviceForm = () => {
         setImage,
         purchaseLink,
         setPurchaseLink,
-        manualUrl,
-        setManualUrl,
+        videoUrl,
+        setVideoUrl,
+        pdfUrl,
+        setPdfUrl,
         handleSubmit,
+        handleDelete,
     };
 };

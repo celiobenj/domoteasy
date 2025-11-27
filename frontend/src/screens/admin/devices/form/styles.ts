@@ -46,4 +46,14 @@ export const styles = StyleSheet.create({
     buttonContainer: {
         marginTop: theme.spacing.xlarge,
     },
+    deleteButton: {
+        marginTop: theme.spacing.large,
+        alignItems: 'center',
+        padding: theme.spacing.medium,
+    },
+    deleteButtonText: {
+        color: theme.colors.error,
+        fontFamily: theme.typography.fontFamily.bold,
+        fontSize: theme.typography.fontSize.medium,
+    },
 });

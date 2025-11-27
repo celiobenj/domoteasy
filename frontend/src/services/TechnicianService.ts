@@ -194,4 +194,13 @@ export const TechnicianService = {
 
         return techniciansData[technicianIndex];
     },
+    async delete(id: string): Promise<boolean> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const initialLength = techniciansData.length;
+        techniciansData = techniciansData.filter(t => t.id !== id);
+
+        return techniciansData.length < initialLength;
+    },
 };

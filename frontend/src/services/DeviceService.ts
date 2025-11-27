@@ -20,7 +20,8 @@ export interface Device {
     price: number;
     image?: string;
     purchaseLink?: string;
-    manualUrl?: string;
+    videoUrl?: string;
+    pdfUrl?: string;
 }
 
 export interface DeviceManual {
@@ -161,7 +162,7 @@ const MOCK_ADMIN_DEVICES: Device[] = [
         brand: 'Philips Hue',
         price: 150.00,
         purchaseLink: 'https://example.com/lampada',
-        manualUrl: 'https://www.youtube.com/watch?v=example',
+        videoUrl: 'https://www.youtube.com/watch?v=example',
     },
     {
         id: '2',
@@ -169,7 +170,7 @@ const MOCK_ADMIN_DEVICES: Device[] = [
         brand: 'Positivo',
         price: 80.00,
         purchaseLink: 'https://example.com/tomada',
-        manualUrl: '/manuals/tomada-positivo.pdf',
+        pdfUrl: '/manuals/tomada-positivo.pdf',
     },
     {
         id: '3',

@@ -23,9 +23,12 @@ export default function DeviceFormScreen() {
         setImage,
         purchaseLink,
         setPurchaseLink,
-        manualUrl,
-        setManualUrl,
+        videoUrl,
+        setVideoUrl,
+        pdfUrl,
+        setPdfUrl,
         handleSubmit,
+        handleDelete,
     } = useDeviceForm();
 
     if (loading) {
@@ -92,11 +95,19 @@ export default function DeviceFormScreen() {
                     />
 
                     <InputTitle
-                        title="Manual (URL Video/PDF)"
+                        title="URL do Vídeo (Manual)"
                         placeholder="https://youtube.com/..."
-                        value={manualUrl}
-                        onChangeText={setManualUrl}
-                        icon="file-document"
+                        value={videoUrl}
+                        onChangeText={setVideoUrl}
+                        icon="play-circle-outline"
+                    />
+
+                    <InputTitle
+                        title="URL do PDF (Manual)"
+                        placeholder="/manuals/..."
+                        value={pdfUrl}
+                        onChangeText={setPdfUrl}
+                        icon="file-pdf-box"
                     />
 
                     <View style={styles.buttonContainer}>
@@ -105,6 +116,18 @@ export default function DeviceFormScreen() {
                             onPress={handleSubmit}
                             disabled={saving}
                         />
+
+                        {isEditMode && (
+                            <TouchableOpacity
+                                style={styles.deleteButton}
+                                onPress={handleDelete}
+                                activeOpacity={0.8}
+                            >
+                                <Text style={styles.deleteButtonText}>
+                                    Excluir Dispositivo
+                                </Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 </View>
             </ScrollView>

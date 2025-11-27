@@ -15,6 +15,7 @@ export default function TechnicianApprovalScreen() {
         handleReject,
         handleDeactivate,
         handleReactivate,
+        handleDelete,
     } = useAdminTechnicians();
 
     if (loading) {
@@ -77,13 +78,22 @@ export default function TechnicianApprovalScreen() {
                 )}
 
                 {(item.status === 'inactive' || item.status === 'rejected') && (
-                    <TouchableOpacity
-                        style={[styles.actionButton, { backgroundColor: theme.colors.success }]}
-                        onPress={() => handleReactivate(item.id)}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={styles.actionButtonText}>Reativar</Text>
-                    </TouchableOpacity>
+                    <>
+                        <TouchableOpacity
+                            style={[styles.actionButton, { backgroundColor: theme.colors.success }]}
+                            onPress={() => handleReactivate(item.id)}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.actionButtonText}>Reativar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.actionButton, { backgroundColor: theme.colors.error, marginLeft: 8 }]}
+                            onPress={() => handleDelete(item.id)}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.actionButtonText}>Excluir</Text>
+                        </TouchableOpacity>
+                    </>
                 )}
             </View>
         </View>

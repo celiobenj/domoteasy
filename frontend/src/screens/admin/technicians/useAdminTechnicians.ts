@@ -65,6 +65,17 @@ export const useAdminTechnicians = () => {
         }
     };
 
+    const handleDelete = async (id: string) => {
+        try {
+            setLoading(true);
+            await TechnicianService.delete(id);
+            await loadTechnicians();
+        } catch (error) {
+            console.error('Error deleting technician:', error);
+            setLoading(false);
+        }
+    };
+
     return {
         technicians,
         loading,
@@ -72,5 +83,6 @@ export const useAdminTechnicians = () => {
         handleReject,
         handleDeactivate,
         handleReactivate,
+        handleDelete,
     };
 };
