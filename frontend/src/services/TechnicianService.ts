@@ -56,19 +56,21 @@ export const TechnicianService = {
     },
 
     async getById(id: string): Promise<Technician | undefined> {
-        // TODO: Implement backend endpoint - currently mock
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Mock implementation - replace when backend ready
-        const mockTechnicians = await this.getAll();
-        return mockTechnicians.find(t => t.id === id);
+        try {
+            // Try to fetch specific technician if endpoint exists, otherwise filter from all
+            // Assuming /tecnicos/:id might not exist yet, but we should try or use getAll
+            // Since we want to remove "mock" behavior (simulated delay), we just use real data.
+            const all = await this.getAll();
+            return all.find(t => t.id === id);
+        } catch (error) {
+            console.error('Error fetching technician by id:', error);
+            return undefined;
+        }
     },
 
     async getPendingTechnicians(): Promise<Technician[]> {
-        // TODO: Implement backend endpoint - currently mock
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        // Mock implementation - backend should provide a /tecnicos/pendentes endpoint
+        // Real implementation: Filter from all or call specific endpoint
+        // For now, filtering from getAll is a valid client-side operation on real data
         const allTechnicians = await this.getAll();
         return allTechnicians.filter(t => t.status === 'pending');
     },
@@ -158,16 +160,12 @@ export const TechnicianService = {
         id: string,
         data: Partial<Technician>
     ): Promise<Technician | undefined> {
-        // TODO: Implement backend endpoint - currently mock
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        console.log('Mock: Updating technician', id, data);
-        return undefined;
+        // Backend only supports password change via /usuario/atualizar
+        // Profile data updates are not yet implemented in backend for technicians
+        throw new Error("Feature not available on server");
     },
 
     async delete(id: string): Promise<boolean> {
-        // TODO: Implement backend endpoint - currently mock
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        console.log('Mock: Deleting technician', id);
-        return false;
+        throw new Error("Feature not available on server");
     },
 };

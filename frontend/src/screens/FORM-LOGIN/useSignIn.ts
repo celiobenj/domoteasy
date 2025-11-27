@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { authService, LoginData } from '@/services/authService';
-import { validateLogin, ValidationError } from '@/utils/validation';
 import { useAuth } from '@/contexts/AuthContext';
 
 export const useSignIn = () => {
@@ -36,19 +35,9 @@ export const useSignIn = () => {
     };
 
     const handleSignIn = async () => {
-        // 1. Validação
-        const validation = validateLogin(formData.email, formData.senha);
+        // REMOVED: Client-side validation
+        // The Frontend is now a "Dummy View" that sends raw data to the Backend.
 
-        if (!validation.isValid) {
-            const errorMap: Record<string, string> = {};
-            validation.errors.forEach((error: ValidationError) => {
-                errorMap[error.field] = error.message;
-            });
-            setErrors(errorMap);
-            return;
-        }
-
-        // 2. Chamada de API
         setLoading(true);
         try {
             const response = await authService.login(formData);

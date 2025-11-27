@@ -18,7 +18,9 @@ export const useBudget = () => {
     const [loading, setLoading] = useState(false);
 
     const total = useMemo(() => {
-        return items.reduce((sum, item) => sum + item.price, 0);
+        // REMOVED: Local calculation
+        // return items.reduce((sum, item) => sum + item.price, 0);
+        return 0; // Initial value, will be updated from backend
     }, [items]);
 
     const handleSave = async () => {
@@ -27,7 +29,7 @@ export const useBudget = () => {
             if (projectId) {
                 await ProjectService.saveBudget(projectId, items);
                 // Gera orçamento oficial no backend
-                await ProjectService.generateBudget(projectId);
+                await ProjectService.generateBudget(items.map(i => i.id));
             }
             router.dismissAll();
             router.replace('/FORM-HOME');

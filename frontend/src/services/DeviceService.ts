@@ -87,84 +87,40 @@ const adaptBackendDeviceAdmin = (backendData: BackendDevice): Device => {
     };
 };
 
-// Mock manual data (backend doesn't provide this yet)
-const MOCK_MANUALS: { [key: string]: DeviceManual } = {
-    '1': {
-        id: '1',
-        content: `# Manual de Instalação - Lâmpada Inteligente Philips Hue
-
-## 1. Preparação
-- Certifique-se de que sua rede Wi-Fi está funcionando
-- Desligue a energia no disjuntor antes de instalar
-- Tenha em mãos seu smartphone com o app Philips Hue
-
-## 2. Instalação Física
-1. Remova a lâmpada antiga
-2. Rosqueie a lâmpada Philips Hue no bocal (E27)
-3. Religue a energia no disjuntor
-
-## 3. Configuração do App
-1. Baixe o app "Philips Hue" na loja de aplicativos
-2. Crie uma conta ou faça login
-3. Siga as instruções para adicionar a lâmpada
-4. Configure cenas e automações
-
-## 4. Integração com Assistentes
-- Alexa: "Alexa, descubra dispositivos"
-- Google Assistant: Abra o app Google Home > Adicionar > Configurar dispositivo
-
-## Solução de Problemas
-- Lâmpada não responde: Verifique se está dentro do alcance do Wi-Fi
-- Não aparece no app: Reinicie a lâmpada (desligue/ligue 3x)`,
-        videoUrl: 'https://www.youtube.com/watch?v=example',
-    },
-    '2': {
-        id: '2',
-        content: `# Manual de Instalação - Tomada Inteligente Positivo
-
-## 1. Requisitos
-- Rede Wi-Fi 2.4GHz
-- Smartphone com app "Smart Life" ou "Tuya Smart"
-
-## 2. Instalação
-1. Conecte a tomada inteligente na tomada convencional
-2. O LED começará a piscar rapidamente
-
-## 3. Configuração
-1. Baixe o app "Smart Life"
-2. Crie uma conta
-3. Toque em "+" para adicionar dispositivo
-4. Selecione "Tomada"
-5. Insira a senha do Wi-Fi
-6. Aguarde a confirmação
-
-## 4. Uso
-- Ligue/desligue pelo app
-- Configure timers e cronogramas
-- Monitore o consumo de energia
-
-## Dicas
-- Não use com aquecedores acima de 1200W
-- Mantenha atualizado o firmware pelo app`,
-        pdfUrl: '/manuals/tomada-positivo.pdf',
-    },
-};
-
 export const DeviceService = {
     async getDeviceById(id: string): Promise<DeviceDetail | null> {
-        // TODO: Implement backend endpoint for single device - currently mock
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Mock implementation - get from list
-        const devices = await this.getAllDevices();
-        return devices.find(d => d.id === id) || null;
+        try {
+            // Fetch all and find, or use specific endpoint if available
+            // Using getAllDevices is a valid non-mock approach if specific endpoint is missing
+            const devices = await this.getAllDevices();
+            return devices.find(d => d.id === id) || null;
+        } catch (error) {
+            console.error('Error fetching device by id:', error);
+            return null;
+        }
     },
 
     async getDeviceManual(id: string): Promise<DeviceManual | null> {
-        // TODO: Backend doesn't provide manuals yet - currently mock
-        await new Promise(resolve => setTimeout(resolve, 300));
+        try {
+            const response = await api.get(`/conteudo/manual/${id}`);
+            // Backend returns { desc: { id, content, videoUrl, pdfUrl } }
+            const manualData = response.data?.desc;
 
-        return MOCK_MANUALS[id] || null;
+            if (!manualData) return null;
+
+            return {
+                id: String(manualData.id),
+                content: manualData.conteudo || manualData.descricao || '',
+                videoUrl: manualData.linkVideo,
+                pdfUrl: manualData.linkPdf || manualData.pdfUrl,
+            };
+        } catch (error: any) {
+            if (error.response?.status === 403) {
+                throw new Error("Subscription Required");
+            }
+            console.error('Error fetching manual:', error);
+            return null;
+        }
     },
 
     async getAllDevices(): Promise<DeviceDetail[]> {
@@ -220,9 +176,7 @@ export const DeviceService = {
      * @param data Device data
      */
     async update(id: number, data: Omit<Device, 'id'>): Promise<void> {
-        // TODO: Backend doesn't support update yet - currently mock
-        console.log("Mock Update:", data);
-        await new Promise(resolve => setTimeout(resolve, 800));
+        throw new Error("Feature not available on server");
     },
 
     /**
@@ -274,10 +228,7 @@ export const DeviceService = {
      * @returns Promise with updated device or undefined if not found
      */
     async updateDevice(id: string, data: Partial<Device>): Promise<Device | undefined> {
-        // TODO: Backend doesn't support update yet - currently mock
-        await new Promise(resolve => setTimeout(resolve, 800));
-        console.log('Mock: Updating device', id, data);
-        return undefined;
+        throw new Error("Feature not available on server");
     },
 
     /**
@@ -286,9 +237,6 @@ export const DeviceService = {
      * @returns Promise with boolean indicating success
      */
     async deleteDevice(id: string): Promise<boolean> {
-        // TODO: Backend doesn't support delete yet - currently mock
-        await new Promise(resolve => setTimeout(resolve, 600));
-        console.log('Mock: Deleting device', id);
-        return false;
+        throw new Error("Feature not available on server");
     }
 };

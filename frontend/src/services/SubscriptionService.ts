@@ -68,28 +68,21 @@ export const SubscriptionService = {
     },
 
     async subscribe(planId: string, paymentData: any): Promise<void> {
-        // TODO: Implement backend endpoint - currently mock
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                console.log(`Assinado plano ${planId} com dados de pagamento:`, paymentData);
-                resolve();
-            }, 2000);
-        });
+        throw new Error("Feature not available on server");
     },
 
     async cancelSubscription(): Promise<void> {
-        // TODO: Implement backend endpoint - currently mock
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                console.log('Assinatura cancelada');
-                resolve();
-            }, 1000);
-        });
+        throw new Error("Feature not available on server");
     },
 
     async getSubscriptionStatus(): Promise<string> {
-        // TODO: Implement backend endpoint - currently mock
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return 'free';
+        try {
+            const response = await api.get('/usuario/info');
+            const tipo = response.data?.tipoAssinatura || 'free';
+            return tipo.toLowerCase().includes('premium') ? 'premium' : 'free';
+        } catch (error) {
+            console.error('Error fetching subscription status:', error);
+            return 'free';
+        }
     }
 };

@@ -31,124 +31,8 @@ export interface Item extends Device {
     selected: boolean;
 }
 
-// Mock Project Data (fallback only)
-const MOCK_PROJECTS: Project[] = [];
+// Mock Project Data removed
 
-// Mock Device Data (no longer used for recommendations)
-const MOCK_DEVICES: Device[] = [
-    {
-        id: '1',
-        name: 'Lâmpada Inteligente',
-        brand: 'Philips Hue',
-        price: 150.00,
-        category: 'Iluminação',
-        description: 'Lâmpada LED inteligente com controle de cor e intensidade via app. Compatível com Alexa e Google Home.',
-        specs: [
-            { label: 'Potência', value: '9W' },
-            { label: 'Vida útil', value: '25.000 horas' },
-            { label: 'Cores', value: '16 milhões' },
-        ],
-        purchaseLink: 'https://www.amazon.com.br/lampada-philips-hue'
-    },
-    {
-        id: '2',
-        name: 'Tomada Inteligente',
-        brand: 'Positivo',
-        price: 80.00,
-        category: 'Energia',
-        description: 'Tomada Wi-Fi inteligente com monitoramento de consumo de energia em tempo real.',
-        specs: [
-            { label: 'Voltagem', value: '110/220V' },
-            { label: 'Corrente máxima', value: '10A' },
-            { label: 'Conectividade', value: 'Wi-Fi 2.4GHz' },
-        ],
-        purchaseLink: 'https://www.magazineluiza.com.br/tomada-positivo'
-    },
-    {
-        id: '3',
-        name: 'Assistente Virtual',
-        brand: 'Amazon Echo Dot',
-        price: 350.00,
-        category: 'Hub',
-        description: 'Smart speaker com Alexa. Controle dispositivos, ouça música e faça perguntas.',
-        specs: [
-            { label: 'Alto-falante', value: '1.6"' },
-            { label: 'Conectividade', value: 'Wi-Fi, Bluetooth' },
-            { label: 'Assistente', value: 'Alexa' },
-        ],
-        purchaseLink: 'https://www.amazon.com.br/echo-dot'
-    },
-    {
-        id: '4',
-        name: 'Câmera de Segurança',
-        brand: 'Intelbras',
-        price: 250.00,
-        category: 'Segurança',
-        description: 'Câmera IP Full HD com visão noturna e detecção de movimento.',
-        specs: [
-            { label: 'Resolução', value: '1080p Full HD' },
-            { label: 'Visão noturna', value: 'Até 10m' },
-            { label: 'Ângulo', value: '120°' },
-        ],
-        purchaseLink: 'https://www.intelbras.com/pt-br/camera-wifi'
-    },
-    {
-        id: '5',
-        name: 'Fechadura Digital',
-        brand: 'Yale',
-        price: 1200.00,
-        category: 'Segurança',
-        description: 'Fechadura eletrônica com senha, cartão e app. Instala em qualquer porta.',
-        specs: [
-            { label: 'Tipo', value: 'Biométrica + Senha' },
-            { label: 'Bateria', value: '6 meses' },
-            { label: 'Conectividade', value: 'Bluetooth + Wi-Fi' },
-        ],
-        purchaseLink: 'https://www.yale.com.br/fechadura-digital'
-    },
-    {
-        id: '6',
-        name: 'Sensor de Presença',
-        brand: 'Xiaomi',
-        price: 60.00,
-        category: 'Sensores',
-        description: 'Sensor de movimento compacto com bateria de longa duração.',
-        specs: [
-            { label: 'Alcance', value: '7 metros' },
-            { label: 'Bateria', value: '2 anos' },
-            { label: 'Protocolo', value: 'Zigbee' },
-        ],
-        purchaseLink: 'https://www.mi.com/br/sensor-presenca'
-    },
-    {
-        id: '7',
-        name: 'Interruptor Inteligente',
-        brand: 'Sonoff',
-        price: 90.00,
-        category: 'Iluminação',
-        description: 'Interruptor Wi-Fi que substitui interruptores convencionais sem alteração elétrica.',
-        specs: [
-            { label: 'Voltagem', value: '110/220V' },
-            { label: 'Canais', value: '1 via' },
-            { label: 'Conectividade', value: 'Wi-Fi 2.4GHz' },
-        ],
-        purchaseLink: 'https://www.sonoff.com.br/interruptor-wifi'
-    },
-    {
-        id: '8',
-        name: 'Controle Universal IR',
-        brand: 'Positivo',
-        price: 100.00,
-        category: 'Controle',
-        description: 'Controle remoto universal que substitui todos os controles da casa via app.',
-        specs: [
-            { label: 'Tipo', value: 'Infravermelho' },
-            { label: 'Alcance', value: '8 metros' },
-            { label: 'Dispositivos', value: 'Ilimitados' },
-        ],
-        purchaseLink: 'https://www.positivocasa.com.br/controle-universal'
-    },
-];
 
 export const ProjectService = {
     async create(data: ProjectData): Promise<Project> {
@@ -207,12 +91,16 @@ export const ProjectService = {
         });
     },
 
-    async generateBudget(projectId: string): Promise<{ id: string; valorTotal: number }> {
+    async generateBudget(itemIds: string[]): Promise<{ id: string; valorTotal: number }> {
         const response = await api.post('/orcamentos/gerar', {
-            idProjeto: Number(projectId),
+            itens: itemIds,
         });
-        const data = response.data as { id: number; valorTotal: number };
-        return { id: String(data.id), valorTotal: data.valorTotal };
+
+        // Backend returns { desc: { valorTotal: ... } }
+        const data = response.data;
+        const valorTotal = data.desc?.valorTotal || data.valorTotal || 0;
+
+        return { id: 'new', valorTotal };
     },
 
     async listByUser(): Promise<Project[]> {
@@ -236,8 +124,8 @@ export const ProjectService = {
                 return project;
             });
         } catch (error) {
-            console.error('Erro ao listar projetos do usuário, usando mock:', error);
-            return MOCK_PROJECTS;
+            console.error('Erro ao listar projetos do usuário:', error);
+            return [];
         }
     }
 };

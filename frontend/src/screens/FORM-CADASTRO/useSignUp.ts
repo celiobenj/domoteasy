@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { authService } from '@/services/authService'; // Certifique-se que o path está certo
-import { validateSignUp, ValidationError } from '@/utils/validation';
+import { authService } from '@/services/authService';
 import { useAuth } from '@/contexts/AuthContext';
 
 export const useSignUp = () => {
@@ -32,21 +31,8 @@ export const useSignUp = () => {
     };
 
     const handleSignUp = async () => {
-        // 1. Validação
-        // Note que validateSignUp espera (nome, email, senha, confirmaSenha) ou a ordem correta dos argumentos.
-        // Verifique seu arquivo utils/validation.ts. Assumindo a ordem: nome, email, senha, confirma
-        const validation = validateSignUp(name, email, password, confirmPassword);
-
-        if (!validation.isValid) {
-            const errorMap: Record<string, string> = {};
-            validation.errors.forEach((error: ValidationError) => {
-                // Traduzindo campos de erro se necessário, ou usando o que vem do validador
-                // Se o validador retorna 'nome', mapeamos para nossa key de erro
-                errorMap[error.field] = error.message;
-            });
-            setErrors(errorMap);
-            return;
-        }
+        // REMOVED: Client-side validation
+        // The Frontend is now a "Dummy View" that sends raw data to the Backend.
 
         setLoading(true);
         try {

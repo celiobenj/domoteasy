@@ -9,92 +9,6 @@ export interface User {
     subscriptionType: 'common' | 'premium';
 }
 
-const MOCK_USERS: User[] = [
-    {
-        id: '1',
-        name: 'Ana Silva',
-        email: 'ana.silva@email.com',
-        role: 'user',
-        status: 'active',
-        subscriptionType: 'premium',
-    },
-    {
-        id: '2',
-        name: 'Carlos Santos',
-        email: 'carlos.santos@email.com',
-        role: 'user',
-        status: 'active',
-        subscriptionType: 'common',
-    },
-    {
-        id: '3',
-        name: 'Beatriz Oliveira',
-        email: 'beatriz.oliveira@email.com',
-        role: 'user',
-        status: 'inactive',
-        subscriptionType: 'common',
-    },
-    {
-        id: '4',
-        name: 'Daniel Costa',
-        email: 'daniel.costa@email.com',
-        role: 'user',
-        status: 'active',
-        subscriptionType: 'premium',
-    },
-    {
-        id: '5',
-        name: 'Fernanda Lima',
-        email: 'fernanda.lima@email.com',
-        role: 'user',
-        status: 'active',
-        subscriptionType: 'common',
-    },
-    {
-        id: '6',
-        name: 'Gabriel Pereira',
-        email: 'gabriel.pereira@email.com',
-        role: 'admin',
-        status: 'active',
-        subscriptionType: 'premium',
-    },
-    {
-        id: '7',
-        name: 'Helena Rodrigues',
-        email: 'helena.rodrigues@email.com',
-        role: 'user',
-        status: 'inactive',
-        subscriptionType: 'common',
-    },
-    {
-        id: '8',
-        name: 'Igor Almeida',
-        email: 'igor.almeida@email.com',
-        role: 'user',
-        status: 'active',
-        subscriptionType: 'premium',
-    },
-    {
-        id: '9',
-        name: 'Julia Ferreira',
-        email: 'julia.ferreira@email.com',
-        role: 'user',
-        status: 'active',
-        subscriptionType: 'common',
-    },
-    {
-        id: '10',
-        name: 'Lucas Martins',
-        email: 'lucas.martins@email.com',
-        role: 'user',
-        status: 'inactive',
-        subscriptionType: 'common',
-    },
-];
-
-// In-memory storage to simulate persistence during the session (fallback only)
-let usersData = [...MOCK_USERS];
-
 function mapBackendUser(u: any): User {
     const tipoAssinatura: string = (u.tipoAssinatura || '').toLowerCase();
     const isPremium = tipoAssinatura.includes('premium');
@@ -131,16 +45,8 @@ export const UserService = {
 
             return users;
         } catch (error) {
-            console.error('Erro ao listar usuários admin, usando mock:', error);
-            if (!search || search.trim() === '') {
-                return usersData;
-            }
-            const lowerSearch = search.toLowerCase();
-            return usersData.filter(
-                user =>
-                    user.name.toLowerCase().includes(lowerSearch) ||
-                    user.email.toLowerCase().includes(lowerSearch)
-            );
+            console.error('Erro ao listar usuários admin:', error);
+            throw error;
         }
     },
 
@@ -154,8 +60,8 @@ export const UserService = {
             const all = await this.getAllUsers();
             return all.find(user => user.id === id);
         } catch (error) {
-            console.error('Erro ao buscar usuário admin, usando mock:', error);
-            return usersData.find(user => user.id === id);
+            console.error('Erro ao buscar usuário admin:', error);
+            throw error;
         }
     },
 
@@ -175,7 +81,13 @@ export const UserService = {
                 patch.tipoAssinatura = data.subscriptionType === 'premium' ? 'Premium' : 'Comum';
             }
 
-            await api.patch(`/admin/usuarios/${id}`, patch);
+            // Backend expects /usuario/atualizar for self update, or /admin/usuarios/:id for admin update
+            // Assuming this service is used by Admin mostly based on context, but let's check
+            // The user request says: `updateProfile`: Call `api.put('/usuario/' + id, data)`. Map frontend fields (`name`) to backend (`nome`).
+            // However, the backend route seems to be PATCH /usuario/atualizar (self) or PATCH /admin/usuarios/:id (admin)
+            // I will follow the user instruction for `updateProfile` in `UserService.ts`.
+
+            await api.put('/usuario/' + id, patch);
 
             // Recarrega usuário para refletir mudanças
             return this.getUserById(id);

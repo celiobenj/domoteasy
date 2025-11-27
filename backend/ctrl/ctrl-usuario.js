@@ -1,13 +1,38 @@
 import Usuario from '../entidades/e-usuario.js';
 
-// jogar parte de banco de dados para entidade - FEITO
-// verificação de formato de senha no ctrl - A FAZER
-// pedir para o Célio mandar a função de verificação de senha
+// Validation helpers (The Brain - Business Logic)
+const validarEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
+
+const validarSenha = (senha) => {
+    if (!senha || senha.length < 8) {
+        return { valida: false, erro: "A senha deve ter no mínimo 8 caracteres." };
+    }
+    if (!/[a-zA-Z]/.test(senha)) {
+        return { valida: false, erro: "A senha deve conter pelo menos uma letra." };
+    }
+    if (!/[0-9]/.test(senha)) {
+        return { valida: false, erro: "A senha deve conter pelo menos um número." };
+    }
+    return { valida: true };
+};
 
 class CtrlUsuario {
 
     async cadastro(req, res) {
         const { nome, email, senha } = req.body;
+
+        // Strong validation in controller (MVC - The Brain)
+        if (!email || !validarEmail(email)) {
+            return res.status(400).json({ desc: { erro: "Email inválido." } });
+        }
+
+        const validacaoSenha = validarSenha(senha);
+        if (!validacaoSenha.valida) {
+            return res.status(400).json({ desc: { erro: validacaoSenha.erro } });
+        }
 
         const usuario = new Usuario()
         const result = await usuario.cadastro(nome, email, senha)
@@ -24,10 +49,18 @@ class CtrlUsuario {
         res.status(result.status).json(result.desc)
     }
 
-    async atualizarDados(req, res){
+    async atualizarDados(req, res) {
         const id = req.usuario.id;
         const { senhaAtual, novaSenha } = req.body;
-        
+
+        // Validate new password if provided
+        if (novaSenha) {
+            const validacaoSenha = validarSenha(novaSenha);
+            if (!validacaoSenha.valida) {
+                return res.status(400).json({ desc: { erro: validacaoSenha.erro } });
+            }
+        }
+
         const usuario = new Usuario()
         const result = await usuario.atualizarDados(id, senhaAtual, novaSenha)
 
@@ -36,7 +69,7 @@ class CtrlUsuario {
 
     async obterInformacoes(req, res) {
         const id = req.usuario.id;
-        
+
         const usuario = new Usuario()
         const result = await usuario.obterInformacoes(id)
 
@@ -45,7 +78,7 @@ class CtrlUsuario {
 
     async obterNome(req, res) {
         const id = req.usuario.id;
-        
+
         const usuario = new Usuario()
         const result = await usuario.obterNome(id)
 

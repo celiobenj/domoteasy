@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { Alert } from 'react-native';
 import api from '../../services/api';
-import { isValidPassword, isValidPhone } from '../../utils/validation';
 import { authService } from '../../services/authService';
 import { TechnicianService } from '../../services/TechnicianService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -71,44 +70,8 @@ export const useEditProfile = () => {
 
         setErrors({}); // Limpar erros anteriores
 
-        // 1. Validações Básicas (Senha)
-        if (currentPassword || newPassword || confirmPassword) {
-            if (!currentPassword) {
-                setErrors((prev) => ({ ...prev, currentPassword: 'Senha atual é obrigatória' }));
-                return;
-            }
-            if (!newPassword) {
-                setErrors((prev) => ({ ...prev, newPassword: 'Nova senha é obrigatória' }));
-                return;
-            }
-            if (newPassword !== confirmPassword) {
-                setErrors((prev) => ({ ...prev, confirmPassword: 'As senhas não coincidem' }));
-                return;
-            }
-
-            // 2. Validar critérios da nova senha
-            const validationError = isValidPassword(newPassword);
-            if (validationError) {
-                setErrors((prev) => ({ ...prev, newPassword: validationError.message }));
-                return;
-            }
-        }
-
-        // Validações de Técnico
-        if (isTechnician) {
-            if (!specialty.trim()) {
-                setErrors((prev) => ({ ...prev, specialty: 'Especialidade é obrigatória' }));
-                return;
-            }
-            if (!phone.trim()) {
-                setErrors((prev) => ({ ...prev, phone: 'Telefone é obrigatório' }));
-                return;
-            }
-            if (!isValidPhone(phone)) {
-                setErrors((prev) => ({ ...prev, phone: 'Formato inválido: (XX) XXXXX-XXXX' }));
-                return;
-            }
-        }
+        // REMOVED: Client-side validation
+        // The Frontend is now a "Dummy View" that sends raw data to the Backend.
 
         setLoading(true);
 

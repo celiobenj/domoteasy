@@ -46,6 +46,7 @@ export const authService = {
       });
 
       // Backend sends result.desc as response body directly
+      // result.desc = { token, id }
       const { token, id } = response.data;
 
       // Fetch user info to get nome, email, and tipoAssinatura
@@ -67,9 +68,16 @@ export const authService = {
       console.error('SignUp error:', error);
       console.error('Response data:', error.response?.data);
 
-      // Backend sends errors directly in response.data.erro
-      if (error.response?.data?.erro) {
-        throw new Error(error.response.data.erro);
+      // Backend sends errors directly in response.data.desc.erro if following the new pattern
+      // Or response.data.erro if following the old pattern.
+      // The user requested: return status: 400 with JSON { desc: { erro: "Message..." } }.
+      // So axios error.response.data will be { desc: { erro: "..." } }.
+
+      const errorData = error.response?.data;
+      const errorMessage = errorData?.desc?.erro || errorData?.erro;
+
+      if (errorMessage) {
+        throw new Error(errorMessage);
       } else if (error.response?.status === 409) {
         throw new Error('Este e-mail já está cadastrado.');
       } else if (error.message === 'Network Error') {
@@ -109,9 +117,11 @@ export const authService = {
       console.error('Login error:', error);
       console.error('Response data:', error.response?.data);
 
-      // Backend sends errors directly in response.data.erro
-      if (error.response?.data?.erro) {
-        throw new Error(error.response.data.erro);
+      const errorData = error.response?.data;
+      const errorMessage = errorData?.desc?.erro || errorData?.erro;
+
+      if (errorMessage) {
+        throw new Error(errorMessage);
       } else if (error.response?.status === 401) {
         throw new Error('Email ou senha inválidos.');
       } else if (error.message === 'Network Error') {
@@ -127,7 +137,8 @@ export const authService = {
       await api.patch('/usuario/atualizar', data);
       return { message: 'Perfil atualizado com sucesso' };
     } catch (error: any) {
-      const message = error?.response?.data?.erro || 'Erro ao atualizar perfil';
+      const errorData = error?.response?.data;
+      const message = errorData?.desc?.erro || errorData?.erro || 'Erro ao atualizar perfil';
       throw { status: error?.response?.status ?? 500, message } as ApiError;
     }
   },
