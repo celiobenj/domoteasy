@@ -32,10 +32,10 @@ const AppEntry = () => {
                         // Carrega dados do usuário se houver token
                         await loadUserData();
                         // Se logado, manda para a home
-                        router.replace('./home');
+                        router.replace('./FORM-HOME');
                     } else {
                         // Se não, manda para a tela de 'welcome'
-                        router.replace('./welcome');
+                        router.replace('./FORM-BEM-VINDO');
                     }
                 } catch (e) {
                     console.error("Falha ao verificar status de auth", e);

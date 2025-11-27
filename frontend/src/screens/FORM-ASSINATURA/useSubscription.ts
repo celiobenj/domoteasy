@@ -39,7 +39,7 @@ export const useSubscription = () => {
 
     const handleProceedToPayment = () => {
         if (selectedPlan) {
-            router.push('/subscription/payment');
+            router.push('/FORM-ASSINATURA/PAGAMENTO');
         } else {
             Alert.alert('Selecione um plano', 'Por favor, escolha um plano para continuar.');
         }
@@ -73,7 +73,7 @@ export const useSubscription = () => {
 
             // Redirect to home after delay
             setTimeout(() => {
-                router.replace('/home');
+                router.replace('/FORM-HOME');
             }, 1500);
         } catch (error) {
             Alert.alert('Erro', 'Falha ao processar pagamento. Tente novamente.');

@@ -44,7 +44,7 @@ export const useTechnicianList = () => {
     };
 
     const handleTechnicianPress = (id: string) => {
-        router.push({ pathname: '/technicians/[id]', params: { id } });
+        router.push({ pathname: '/FORM-CONTATO-DETALHE/[id]', params: { id } });
     };
 
     return {

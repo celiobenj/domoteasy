@@ -19,7 +19,7 @@ export const useDeviceManual = () => {
                 [
                     {
                         text: 'Fazer Upgrade',
-                        onPress: () => router.replace('/subscription/plans')
+                        onPress: () => router.replace('/FORM-ASSINATURA/PLANOS')
                     }
                 ]
             );

@@ -10,7 +10,7 @@ export default function AdminLayout() {
     useEffect(() => {
         // Redirect non-admin users to home
         if (!isLoading && !isAdmin()) {
-            router.replace('/home');
+            router.replace('/FORM-HOME');
         }
     }, [isLoading, isAdmin]);
 
@@ -46,9 +46,9 @@ export default function AdminLayout() {
     return (
         <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="users" options={{ headerShown: false }} />
-            <Stack.Screen name="devices" options={{ headerShown: false }} />
-            <Stack.Screen name="technicians" options={{ headerShown: false }} />
+            <Stack.Screen name="USUARIOS" options={{ headerShown: false }} />
+            <Stack.Screen name="DISPOSITIVOS" options={{ headerShown: false }} />
+            <Stack.Screen name="TECNICOS" options={{ headerShown: false }} />
         </Stack>
     );
 }

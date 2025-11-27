@@ -87,7 +87,7 @@ export const useSignUp = () => {
 
             setTimeout(() => {
                 // Replace para não voltar ao cadastro
-                router.replace('/home');
+                router.replace('/FORM-HOME');
             }, 1000);
 
         } catch (error: any) {
@@ -109,7 +109,7 @@ export const useSignUp = () => {
         if (router.canGoBack()) {
             router.back();
         } else {
-            router.replace('/welcome');
+            router.replace('/FORM-BEM-VINDO');
         }
     };
 

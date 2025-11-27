@@ -84,7 +84,7 @@ export const useSignIn = () => {
             // Navegação após sucesso
             setTimeout(() => {
                 // Replace para não permitir voltar ao login com o botão 'voltar'
-                router.replace('./home');
+                router.replace('./FORM-HOME');
             }, 1000);
 
         } catch (error: any) {
@@ -105,7 +105,7 @@ export const useSignIn = () => {
         if (router.canGoBack()) {
             router.back();
         } else {
-            router.replace('./welcome');
+            router.replace('./FORM-BEM-VINDO');
         }
     };
 

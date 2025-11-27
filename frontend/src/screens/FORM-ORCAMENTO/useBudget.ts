@@ -30,7 +30,7 @@ export const useBudget = () => {
                 await ProjectService.generateBudget(projectId);
             }
             router.dismissAll();
-            router.replace('/home');
+            router.replace('/FORM-HOME');
         } catch (error) {
             console.error('Error saving budget:', error);
         } finally {
@@ -40,7 +40,7 @@ export const useBudget = () => {
 
     const handleExit = () => {
         router.dismissAll();
-        router.replace('/home');
+        router.replace('/FORM-HOME');
     };
 
     const handleOpenPurchaseLink = async (url: string) => {

@@ -28,7 +28,7 @@ export const useEditProfile = () => {
     useEffect(() => {
         if (!userId) {
             // Se não houver ID, redireciona para o login ou welcome
-            router.replace('/welcome');
+            router.replace('/FORM-BEM-VINDO');
             return;
         }
         checkUserRole();
@@ -138,7 +138,7 @@ export const useEditProfile = () => {
 
             setTimeout(() => {
                 // Volta para a Home após sucesso
-                router.navigate('/home');
+                router.navigate('/FORM-HOME');
             }, 1500);
 
         } catch (error: any) {
@@ -151,19 +151,19 @@ export const useEditProfile = () => {
 
     const handleLogout = () => {
         // Logout deve limpar a pilha e voltar para o Welcome/Login
-        router.replace('/welcome');
+        router.replace('/FORM-BEM-VINDO');
     };
 
     const handleGoBack = () => {
         if (router.canGoBack()) {
             router.back();
         } else {
-            router.navigate('/home');
+            router.navigate('/FORM-HOME');
         }
     };
 
     const handleNavigateHome = () => {
-        router.navigate('/home');
+        router.navigate('/FORM-HOME');
     };
 
     return {

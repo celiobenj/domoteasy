@@ -15,14 +15,14 @@ export const useProfile = () => {
 
     const handleUpgrade = () => {
         if (subscriptionStatus === 'premium') {
-            router.push('/FORM-ASSINATURA');
+            router.push('./FORM-ASSINATURA');
         } else {
-            router.push('/subscription/plans');
+            router.push('/FORM-ASSINATURA/PLANOS');
         }
     };
 
     const handleNavigateToAdmin = () => {
-        router.push('./FORM-GESTAO');
+        router.push('/FORM-GESTAO');
     };
 
     const handleLogout = async () => {

@@ -42,7 +42,7 @@ export const useDeviceDetails = () => {
                     { text: 'Agora não', style: 'cancel' },
                     {
                         text: 'Fazer Upgrade',
-                        onPress: () => router.push('/subscription/plans')
+                        onPress: () => router.push('/FORM-ASSINATURA/PLANOS')
                     }
                 ]
             );

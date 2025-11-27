@@ -25,11 +25,11 @@ export const useDeviceList = () => {
     };
 
     const handleAddDevice = () => {
-        router.push('/FORM-GESTAO/devices/create');
+        router.push('/FORM-GESTAO/DISPOSITIVOS/create');
     };
 
     const handleEditDevice = (id: string) => {
-        router.push({ pathname: '/FORM-GESTAO/devices/[id]', params: { id } });
+        router.push({ pathname: '/FORM-GESTAO/DISPOSITIVOS/[id]', params: { id } });
     };
 
     const handleDeleteDevice = (id: string, name: string) => {

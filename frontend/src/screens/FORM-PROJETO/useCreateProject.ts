@@ -47,7 +47,7 @@ export const useCreateProject = () => {
             setLoading(true);
             const project = await ProjectService.create(formData);
             router.push({
-                pathname: '/project/recommendations',
+                pathname: '/FORM-RECOMENDACOES',
                 params: { projectId: project.id }
             });
         } catch (error) {
