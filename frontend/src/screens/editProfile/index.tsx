@@ -25,6 +25,9 @@ const EditProfileScreen = () => {
         currentPassword, setCurrentPassword,
         newPassword, setNewPassword,
         confirmPassword, setConfirmPassword,
+        isTechnician,
+        specialty, setSpecialty,
+        phone, setPhone,
         loading,
         showSuccess,
         errors,
@@ -69,12 +72,47 @@ const EditProfileScreen = () => {
                             />
                         </TouchableOpacity>
                         <Text style={styles.title}>Editar Perfil</Text>
-                        {/* View vazia para balancear o layout se necessário, ou removida se usar textAlign center */}
+                        {/* View vazia para balancear o layout se necessário */}
+                        <View style={{ width: 48 }} />
                     </View>
                 </View>
 
                 {/* Formulário */}
                 <View style={styles.body}>
+                    {/* Campos de Técnico */}
+                    {isTechnician && (
+                        <>
+                            <View style={{ width: '100%' }}>
+                                <InputTitle
+                                    title='Especialidade'
+                                    icon='briefcase'
+                                    placeholder='Ex: Eletricista'
+                                    value={specialty}
+                                    onChangeText={(text) => {
+                                        setSpecialty(text);
+                                        clearError('specialty');
+                                    }}
+                                />
+                                {errors.specialty && <Text style={styles.errorText}>{errors.specialty}</Text>}
+                            </View>
+
+                            <View style={{ width: '100%' }}>
+                                <InputTitle
+                                    title='Telefone Profissional'
+                                    icon='phone'
+                                    placeholder='(XX) XXXXX-XXXX'
+                                    value={phone}
+                                    keyboardType='phone-pad'
+                                    onChangeText={(text) => {
+                                        setPhone(text);
+                                        clearError('phone');
+                                    }}
+                                />
+                                {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
+                            </View>
+                        </>
+                    )}
+
                     {/* Senha Atual */}
                     <View style={{ width: '100%' }}>
                         <InputTitle

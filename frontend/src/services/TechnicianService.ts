@@ -134,4 +134,24 @@ export const TechnicianService = {
 
         return techniciansData[technicianIndex];
     },
+
+    async updateTechnicianData(
+        id: string,
+        data: Partial<Technician>
+    ): Promise<Technician | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const technicianIndex = techniciansData.findIndex(t => t.id === id);
+        if (technicianIndex === -1) {
+            return undefined;
+        }
+
+        techniciansData[technicianIndex] = {
+            ...techniciansData[technicianIndex],
+            ...data,
+        };
+
+        return techniciansData[technicianIndex];
+    },
 };

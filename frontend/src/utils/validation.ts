@@ -14,6 +14,12 @@ export const isValidEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
+// Validar telefone (formato simples: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX)
+export const isValidPhone = (phone: string): boolean => {
+  const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+  return phoneRegex.test(phone);
+};
+
 // Validar senha (mínimo 8 caracteres, pelo menos uma letra e um número)
 export const isValidPassword = (senha: string): ValidationError | null => {
   const errors: string[] = [];

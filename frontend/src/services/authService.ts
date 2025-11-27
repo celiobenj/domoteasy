@@ -20,7 +20,7 @@ export interface UpdateProfileData {
 export interface AuthResponse {
   token: string;
   id?: string;
-  role?: 'user' | 'admin';
+  role?: 'user' | 'admin' | 'technician';
   erro?: string;
 }
 
@@ -120,13 +120,13 @@ export const authService = {
     return await AsyncStorage.getItem('userName');
   },
 
-  async saveUserRole(role: 'user' | 'admin'): Promise<void> {
+  async saveUserRole(role: 'user' | 'admin' | 'technician'): Promise<void> {
     await AsyncStorage.setItem('userRole', role);
   },
 
-  async getUserRole(): Promise<'user' | 'admin' | null> {
+  async getUserRole(): Promise<'user' | 'admin' | 'technician' | null> {
     const role = await AsyncStorage.getItem('userRole');
-    return role as 'user' | 'admin' | null;
+    return role as 'user' | 'admin' | 'technician' | null;
   },
 
   async logout(): Promise<void> {
