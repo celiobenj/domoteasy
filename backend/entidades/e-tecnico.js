@@ -102,5 +102,6 @@ class Tecnico {
             return { status: 500, desc: { erro: "Erro ao cadastrar técnico." } };
         }
     }
-}
+}   
+
 export default Tecnico;
