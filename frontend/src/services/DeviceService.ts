@@ -230,17 +230,40 @@ export const DeviceService = {
      * @returns Promise with created device
      */
     async createDevice(data: Omit<Device, 'id'>): Promise<Device> {
-        // TODO: Backend doesn't support create yet - currently mock
-        await new Promise(resolve => setTimeout(resolve, 800));
+        try {
+            // Transform flat frontend data into nested backend structure
+            const payload = {
+                dispositivo: {
+                    nome: data.name,
+                    marca: data.brand,
+                    preco: Number(data.price),
+                    linkCompra: data.purchaseLink
+                },
+                manual: {
+                    descricao: data.pdfUrl || "Manual PDF", // Backend requires 'descricao'
+                    linkVideo: data.videoUrl
+                }
+            };
 
-        // Mock implementation
-        const newDevice: Device = {
-            id: String(Date.now()),
-            ...data,
-        };
+            const response = await api.post('/conteudo/admin/criar', payload);
 
-        console.log('Mock: Creating device', newDevice);
-        return newDevice;
+            // Verify successful status code
+            if (response.status !== 200 && response.status !== 201) {
+                throw new Error(`Unexpected status code: ${response.status}`);
+            }
+
+            // Return the created device with the ID from backend
+            const createdDevice: Device = {
+                id: String(response.data?.desc?.id || Date.now()),
+                ...data,
+            };
+
+            console.log('Device created successfully:', createdDevice);
+            return createdDevice;
+        } catch (error) {
+            console.error('Error creating device:', error);
+            throw error;
+        }
     },
 
     /**

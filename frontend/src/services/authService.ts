@@ -58,7 +58,7 @@ export const authService = {
         nome: userInfo.nome,
         email: userInfo.email,
         tipoAssinatura: userInfo.tipoAssinatura,
-        role: 'user',
+        role: userInfo.tipoAssinatura?.toLowerCase() === 'admin' ? 'admin' : 'user',
       };
     } catch (error: any) {
       console.error('SignUp error:', error);
@@ -100,7 +100,7 @@ export const authService = {
         nome: userInfo.nome,
         email: userInfo.email,
         tipoAssinatura: userInfo.tipoAssinatura,
-        role: 'user',
+        role: userInfo.tipoAssinatura?.toLowerCase() === 'admin' ? 'admin' : 'user',
       };
     } catch (error: any) {
       console.error('Login error:', error);

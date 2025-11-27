@@ -74,31 +74,84 @@ export const TechnicianService = {
     },
 
     async approve(id: string): Promise<Technician | undefined> {
-        // TODO: Implement backend endpoint - currently mock
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        console.log('Mock: Approving technician', id);
-        return undefined;
+        try {
+            const response = await api.post('/admin/profissionais/status', {
+                idTecnico: id,
+                acao: 'aprovar'
+            });
+
+            // Verify successful status code
+            if (response.status !== 200 && response.status !== 201) {
+                throw new Error(`Unexpected status code: ${response.status}`);
+            }
+
+            console.log('Technician approved successfully:', id);
+            // Return updated technician if backend provides it, otherwise fetch
+            return await this.getById(id);
+        } catch (error) {
+            console.error('Error approving technician:', error);
+            throw error;
+        }
     },
 
     async reject(id: string): Promise<Technician | undefined> {
-        // TODO: Implement backend endpoint - currently mock
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        console.log('Mock: Rejecting technician', id);
-        return undefined;
+        try {
+            const response = await api.post('/admin/profissionais/status', {
+                idTecnico: id,
+                acao: 'reprovar'
+            });
+
+            // Verify successful status code
+            if (response.status !== 200 && response.status !== 201) {
+                throw new Error(`Unexpected status code: ${response.status}`);
+            }
+
+            console.log('Technician rejected successfully:', id);
+            return await this.getById(id);
+        } catch (error) {
+            console.error('Error rejecting technician:', error);
+            throw error;
+        }
     },
 
     async deactivate(id: string): Promise<Technician | undefined> {
-        // TODO: Implement backend endpoint - currently mock
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        console.log('Mock: Deactivating technician', id);
-        return undefined;
+        try {
+            const response = await api.post('/admin/profissionais/status', {
+                idTecnico: id,
+                acao: 'desativar'
+            });
+
+            // Verify successful status code
+            if (response.status !== 200 && response.status !== 201) {
+                throw new Error(`Unexpected status code: ${response.status}`);
+            }
+
+            console.log('Technician deactivated successfully:', id);
+            return await this.getById(id);
+        } catch (error) {
+            console.error('Error deactivating technician:', error);
+            throw error;
+        }
     },
 
     async reactivate(id: string): Promise<Technician | undefined> {
-        // TODO: Implement backend endpoint - currently mock
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        console.log('Mock: Reactivating technician', id);
-        return undefined;
+        try {
+            const response = await api.post('/admin/profissionais/status', {
+                idTecnico: id,
+                acao: 'reativar'
+            });
+
+            // Verify successful status code
+            if (response.status !== 200 && response.status !== 201) {
+                throw new Error(`Unexpected status code: ${response.status}`);
+            }
+
+            console.log('Technician reactivated successfully:', id);
+            return await this.getById(id);
+        } catch (error) {
+            console.error('Error reactivating technician:', error);
+            throw error;
+        }
     },
 
     async updateTechnicianData(
