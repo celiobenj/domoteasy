@@ -32,5 +32,20 @@ class CtrlDispositivo {
         const result = await dispEntity.buscarManualPorDispositivo(idDispositivo);
         res.status(result.status).json(result.desc);
     }
+
+    async remover(req, res) {
+        const { id } = req.params;
+        const dispEntity = new Dispositivo();
+        const result = await dispEntity.remover(id);
+        res.status(result.status).json(result.desc);
+    }
+
+    async atualizar(req, res) {
+        const { id } = req.params;
+        const dados = req.body;
+        const dispEntity = new Dispositivo();
+        const result = await dispEntity.atualizar(id, dados);
+        res.status(result.status).json(result.desc);
+    }
 }
 export default CtrlDispositivo;

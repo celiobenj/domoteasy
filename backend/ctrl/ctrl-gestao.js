@@ -18,14 +18,20 @@ class CtrlGestao {
     }
 
     // SD13: Gestão de Profissionais
+    async listarTodosTecnicos(req, res) {
+        const tecnico = new Tecnico();
+        const result = await tecnico.listarTodosAdmin();
+        res.status(result.status).json(result.desc);
+    }
+
     async gerenciarProfissional(req, res) {
         const { idTecnico, acao } = req.body; // acao: 'aprovar', 'reprovar', 'desativar', 'reativar'
         const tecnico = new Tecnico();
-        
+
         // consertar para modificar com as informações completas do tecnico
 
         let status;
-        switch(acao) {
+        switch (acao) {
             case 'aprovar': status = 'ativo'; break;
             case 'reprovar': status = 'reprovado'; break;
             case 'desativar': status = 'inativo'; break;
@@ -36,5 +42,12 @@ class CtrlGestao {
         const result = await tecnico.atualizarStatus(idTecnico, status);
         res.status(result.status).json(result.desc);
     }
+
+    async excluirProfissional(req, res) {
+        const { idTecnico } = req.params;
+        const tecnico = new Tecnico();
+        const result = await tecnico.remover(idTecnico);
+        res.status(result.status).json(result.desc);
+    }
 }
-export default CtrlGestao; 
+export default CtrlGestao;

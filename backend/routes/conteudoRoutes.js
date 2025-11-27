@@ -7,6 +7,8 @@ const ctrl = new CtrlDispositivo();
 
 router.get('/dispositivos', verificarToken, ctrl.listar);
 router.post('/admin/criar', verificarToken, ctrl.criar); // Admin
+router.delete('/admin/dispositivos/:id', verificarToken, ctrl.remover); // Admin
+router.put('/admin/dispositivos/:id', verificarToken, ctrl.atualizar); // Admin
 router.get('/manual/:idDispositivo', verificarToken, ctrl.acessarManual); // Premium
 
 export default router;

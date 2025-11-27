@@ -15,7 +15,7 @@ class CtrlTecnico {
         const result = await tecnico.buscarPorId(id);
         res.status(result.status).json(result.desc);
     }
-    
+
     async obterPorEmail(req, res) {
         const { email } = req.params;
 
@@ -29,6 +29,14 @@ class CtrlTecnico {
         const { nome, email, telefone, especialidade } = req.body;
         const tecnico = new Tecnico();
         const result = await tecnico.criar(nome, email, telefone, especialidade);
+        res.status(result.status).json(result.desc);
+    }
+
+    async atualizarPerfil(req, res) {
+        const id = req.usuario.id;
+        const dados = req.body;
+        const tecnico = new Tecnico();
+        const result = await tecnico.atualizarDadosContato(id, dados);
         res.status(result.status).json(result.desc);
     }
 }

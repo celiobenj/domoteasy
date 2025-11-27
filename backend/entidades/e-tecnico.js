@@ -12,6 +12,16 @@ class Tecnico {
         }
     }
 
+    async listarTodosAdmin() {
+        const db = await openDb();
+        try {
+            const tecnicos = await db.all("SELECT * FROM tecnicos");
+            return { status: 200, desc: tecnicos };
+        } catch (error) {
+            return { status: 500, desc: { erro: "Erro ao buscar técnicos." } };
+        }
+    }
+
     async buscarPorEmail(email) {
         const db = await openDb();
         try {
@@ -46,15 +56,33 @@ class Tecnico {
         }
     }
 
+    async remover(id) {
+        const db = await openDb();
+        try {
+            await db.run("DELETE FROM tecnicos WHERE id = ?", [id]);
+            return { status: 200, desc: { mensagem: "Técnico removido com sucesso." } };
+        } catch (error) {
+            return { status: 500, desc: { erro: "Erro ao remover técnico." } };
+        }
+    }
+
     // VCP10: Técnico atualiza seus próprios dados
     async atualizarDadosContato(id, dados) {
         const db = await openDb();
         try {
             const { nome, telefone, especialidade } = dados;
-            await db.run(
-                "UPDATE tecnicos SET nome = ?, telefone = ?, especialidade = ? WHERE id = ?",
-                [nome, telefone, especialidade, id]
-            );
+            let queryParts = [];
+            let params = [];
+
+            if (nome !== undefined) { queryParts.push("nome = ?"); params.push(nome); }
+            if (telefone !== undefined) { queryParts.push("telefone = ?"); params.push(telefone); }
+            if (especialidade !== undefined) { queryParts.push("especialidade = ?"); params.push(especialidade); }
+
+            if (queryParts.length > 0) {
+                params.push(id);
+                await db.run(`UPDATE tecnicos SET ${queryParts.join(", ")} WHERE id = ?`, params);
+            }
+
             return { status: 200, desc: { mensagem: "Dados atualizados." } };
         } catch (error) {
             return { status: 500, desc: { erro: "Erro ao atualizar dados." } };
