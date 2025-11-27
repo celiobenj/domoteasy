@@ -145,6 +145,49 @@ class Usuario {
             return { status: 500, desc: "Erro ao obter nome"}
         }
     }
+
+    // VCP11 / SD11: Admin lista todos os usuários
+    async buscarTodos() {
+        const db = await openDb();
+        try {
+            const usuarios = await db.all('SELECT id, nome, email, tipoAssinatura FROM usuarios');
+            return { status: 200, desc: usuarios };
+        } catch (error) {
+            return { status: 500, desc: { erro: "Erro ao listar usuários." } };
+        }
+    }
+
+    // VCP11 / SD11: Admin modifica usuário
+    async atualizarDadosAdm(id, dados) {
+        const db = await openDb();
+        try {
+            const campos = [];
+            const valores = [];
+
+            if (dados.nome) { campos.push("nome = ?"); valores.push(dados.nome); }
+            if (dados.email) { campos.push("email = ?"); valores.push(dados.email); }
+            if (dados.tipoAssinatura) { campos.push("tipoAssinatura = ?"); valores.push(dados.tipoAssinatura); }
+
+            if (campos.length === 0) return { status: 400, desc: { erro: "Nenhum dado." } };
+
+            valores.push(id);
+            await db.run(`UPDATE usuarios SET ${campos.join(', ')} WHERE id = ?`, valores);
+            
+            return { status: 200, desc: { mensagem: "Usuário atualizado." } };
+        } catch (error) {
+            return { status: 500, desc: { erro: "Erro ao atualizar usuário." } };
+        }
+    }
+
+    async acessarManual(idUsuario) {
+        const db = await openDb();
+        const usuario = await db.get("SELECT tipoAssinatura FROM usuarios WHERE id = ?", [idUsuario]);
+
+        if (!usuario || !usuario.tipoAssinatura || !usuario.tipoAssinatura.toLowerCase().includes('premium')) {
+             return { canAccess: false, status: 403, erro: "Recurso exclusivo para Usuários Premium." };
+        }
+        return { canAccess: true };
+    }
 }
 
 async function registrarUsuario(db, nome, email, senha, tipoAssinatura) {

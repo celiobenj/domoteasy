@@ -70,6 +70,75 @@ async function setupDatabase() {
         )
     `);
 
+    // 5. TABELA TÉCNICOS (VCP06, VCP10, VCP13)
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS tecnicos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            telefone TEXT,
+            especialidade TEXT,
+            status TEXT DEFAULT 'pendente' CHECK(status IN ('pendente', 'ativo', 'inativo', 'reprovado'))
+        )
+    `);
+
+    // 6. TABELA DISPOSITIVOS (VCP09, VCP12)
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS dispositivos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            marca TEXT,
+            preco REAL NOT NULL,
+            linkCompra TEXT
+        )
+    `);
+
+    // 7. TABELA MANUAIS (1:1 com Dispositivos - VCP09, VCP12)
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS manuais (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            idDispositivo INTEGER NOT NULL UNIQUE,
+            descricao TEXT,
+            linkVideo TEXT,
+            FOREIGN KEY (idDispositivo) REFERENCES dispositivos(id) ON DELETE CASCADE
+        )
+    `);
+
+    // 8. TABELA PROJETOS (VCP04)
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS projetos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            idUsuario INTEGER NOT NULL,
+            nome TEXT NOT NULL,
+            descricao TEXT,
+            dataCriacao TEXT DEFAULT CURRENT_TIMESTAMP,
+            preferencias TEXT,
+            FOREIGN KEY (idUsuario) REFERENCES usuarios(id)
+        )
+    `);
+
+    // 9. TABELA DE JUNÇÃO: ITENS DO PROJETO (N:N entre Projetos e Dispositivos - VCP04/SD04)
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS itens_projeto (
+            idProjeto INTEGER NOT NULL,
+            idDispositivo INTEGER NOT NULL,
+            quantidade INTEGER DEFAULT 1,
+            FOREIGN KEY (idProjeto) REFERENCES projetos(id) ON DELETE CASCADE,
+            FOREIGN KEY (idDispositivo) REFERENCES dispositivos(id)
+        )
+    `);
+
+    // 10. TABELA ORÇAMENTOS (VCP05)
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS orcamentos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            idProjeto INTEGER NOT NULL,
+            valorTotal REAL NOT NULL,
+            dataGeracao TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (idProjeto) REFERENCES projetos(id)
+        )
+    `);
+
     console.log("Database setup concluído com sucesso.");
 }
 
