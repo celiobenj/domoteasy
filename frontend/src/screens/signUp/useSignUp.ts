@@ -18,7 +18,7 @@ export const useSignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     // Acessa o contexto de autenticação
-    const { setUserName } = useAuth();
+    const { setUserName, updateSubscriptionStatus } = useAuth();
 
     // Handler genérico para limpar erros ao digitar
     const clearError = (field: string) => {
@@ -59,10 +59,27 @@ export const useSignUp = () => {
 
             const response = await authService.signUp(signUpPayload);
             await authService.saveToken(response.token);
-            
+
+            // Salvar ID do usuário
+            await authService.saveUserId(response.id);
+
+            // Salvar role do usuário
+            if (response.role) {
+                await authService.saveUserRole(response.role);
+            }
+
             // Salva o nome do usuário no contexto e no AsyncStorage
-            await authService.saveUserName(name);
-            setUserName(name);
+            if (response.nome) {
+                await authService.saveUserName(response.nome);
+                setUserName(response.nome);
+            }
+
+            // Salvar e atualizar subscription status
+            if (response.tipoAssinatura) {
+                const subscriptionStatus = response.tipoAssinatura.toLowerCase().includes('premium') ? 'premium' : 'free';
+                await authService.saveSubscriptionStatus(subscriptionStatus);
+                await updateSubscriptionStatus(subscriptionStatus);
+            }
 
             // Lógica de 'Manter Conectado' pode ser implementada aqui futuramente
 

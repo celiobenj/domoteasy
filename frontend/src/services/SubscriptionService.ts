@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from './api';
 
 export interface Plan {
@@ -9,78 +10,86 @@ export interface Plan {
     recommended?: boolean;
 }
 
+// Backend response interface (Portuguese keys)
 interface BackendPlan {
-    id: number;
-    nome: string;
-    valor: number;
+    id?: string | number;
+    nome?: string;
+    valor?: number | string;
     descricao?: string;
     duracaoDias?: number;
 }
 
-function mapBackendPlan(p: BackendPlan): Plan {
-    let period: 'monthly' | 'yearly' = 'monthly';
-    if (p.duracaoDias && p.duracaoDias >= 365) {
-        period = 'yearly';
-    }
+/**
+ * Adapter: Maps backend Portuguese data to frontend English interface
+ */
+const adaptBackendPlan = (backendData: BackendPlan): Plan => {
+    // Ensure price is a number
+    const price = typeof backendData.valor === 'string'
+        ? parseFloat(backendData.valor) || 0
+        : backendData.valor || 0;
 
-    const features: string[] = p.descricao
-        ? p.descricao.split(/\r?\n/).filter(Boolean)
-        : ['Acesso aos recursos do plano Premium'];
+    // Determine period based on duration (30 days = monthly, 365 = yearly)
+    const duration = backendData.duracaoDias || 30;
+    const period: 'monthly' | 'yearly' = duration >= 365 ? 'yearly' : 'monthly';
+
+    // Parse features from description (split by newline or comma)
+    const description = backendData.descricao || '';
+    const features = description
+        ? description.split(/[\n,]/).map(f => f.trim()).filter(f => f.length > 0)
+        : [];
+
+    // Yearly plans are recommended by default
+    const recommended = period === 'yearly';
 
     return {
-        id: String(p.id),
-        name: p.nome,
-        price: p.valor,
-        period,
-        features,
-        recommended: period === 'yearly',
+        id: String(backendData.id || ''),
+        name: backendData.nome || '',
+        price: price,
+        period: period,
+        features: features,
+        recommended: recommended,
     };
-}
+};
 
 export const SubscriptionService = {
     async getPlans(): Promise<Plan[]> {
-        const response = await api.get<BackendPlan[]>('/planos');
-        return response.data.map(mapBackendPlan);
+        try {
+            const response = await api.get('/planos');
+            // Backend returns data in response.data.desc (array)
+            const backendPlans = response.data?.desc || [];
+
+            // Map each backend plan to frontend format
+            return backendPlans.map(adaptBackendPlan);
+        } catch (error) {
+            console.error('Error fetching plans:', error);
+            // Return empty array on error to prevent UI crashes
+            return [];
+        }
     },
 
-    /**
-     * Cria assinatura e registra pagamento no backend.
-     */
-    async subscribe(plan: Plan): Promise<void> {
-        // 1) Criar assinatura vinculada ao plano
-        const contratarRes = await api.post('/assinatura/contratar', {
-            idPlano: Number(plan.id),
-        });
-
-        const assinatura = contratarRes.data as { id: number };
-        const fakeTransactionId = `TX-${Date.now()}`;
-
-        // 2) Registrar pagamento e ativar assinatura
-        await api.post('/pagamentos', {
-            idAssinatura: assinatura.id,
-            valor: plan.price,
-            idTransacao: fakeTransactionId,
+    async subscribe(planId: string, paymentData: any): Promise<void> {
+        // TODO: Implement backend endpoint - currently mock
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                console.log(`Assinado plano ${planId} com dados de pagamento:`, paymentData);
+                resolve();
+            }, 2000);
         });
     },
 
     async cancelSubscription(): Promise<void> {
-        await api.patch('/assinatura/cancelar');
+        // TODO: Implement backend endpoint - currently mock
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                console.log('Assinatura cancelada');
+                resolve();
+            }, 1000);
+        });
     },
 
-    async getSubscriptionStatus(): Promise<'free' | 'premium'> {
-        try {
-            const response = await api.get('/assinatura/meu-plano');
-            const assinatura = response.data as { status?: string };
-            if (assinatura && assinatura.status === 'ativa') {
-                return 'premium';
-            }
-            return 'free';
-        } catch (error: any) {
-            // 404 = sem assinatura ainda
-            if (error?.response?.status === 404) {
-                return 'free';
-            }
-            throw error;
-        }
-    },
+    async getSubscriptionStatus(): Promise<string> {
+        // TODO: Implement backend endpoint - currently mock
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return 'free';
+    }
 };

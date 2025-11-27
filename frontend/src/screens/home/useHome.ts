@@ -6,7 +6,7 @@ import { authService } from '@/services/authService';
 import { ProjectService, Project } from '@/services/ProjectService';
 
 export const useHome = () => {
-    const { userName, clearUserName } = useAuth();
+    const { userName, clearUserName, isAdmin } = useAuth();
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -73,14 +73,20 @@ export const useHome = () => {
         router.push(`/project/budget?projectId=${projectId}`);
     };
 
+    const handleNavigateToAdmin = () => {
+        router.push('/admin');
+    };
+
     return {
         userName: userName || "Usuário",
         projects,
         loading,
+        isAdmin: isAdmin(),
         handleNavigateToProfile,
         handleLogout,
         handleNavigateToCreateProject,
         handleNavigateToTechnicians,
         handleNavigateToProject,
+        handleNavigateToAdmin,
     };
 };

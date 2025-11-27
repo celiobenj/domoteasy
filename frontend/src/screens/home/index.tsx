@@ -15,11 +15,13 @@ const HomeScreen = () => {
         userName,
         projects,
         loading,
+        isAdmin,
         handleNavigateToProfile,
         handleLogout,
         handleNavigateToCreateProject,
         handleNavigateToTechnicians,
-        handleNavigateToProject
+        handleNavigateToProject,
+        handleNavigateToAdmin
     } = useHome();
 
     return (
@@ -102,6 +104,22 @@ const HomeScreen = () => {
                         </View>
                     </TouchableOpacity>
                 </View>
+
+                {/* Admin Button */}
+                {isAdmin && (
+                    <View style={[styles.actionsSection, { marginTop: 0, paddingTop: 0 }]}>
+                        <TouchableOpacity
+                            style={[styles.actionButton, { backgroundColor: theme.colors.text }]}
+                            onPress={handleNavigateToAdmin}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={styles.actionButtonText}>Painel Admin</Text>
+                            <View style={styles.actionButtonIcon}>
+                                <MaterialCommunityIcons name="shield-account" size={24} color={theme.colors.onPrimary} />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                )}
             </ScrollView>
 
             {/* Rodapé / Menu de Navegação */}

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from './api';
 
+
 export interface SignUpData {
   nome: string;
   email: string;
@@ -19,8 +20,11 @@ export interface UpdateProfileData {
 
 export interface AuthResponse {
   token: string;
-  id?: string;
+  id: string;
+  nome?: string;
+  email?: string;
   role?: 'user' | 'admin' | 'technician';
+  tipoAssinatura?: string;
   erro?: string;
 }
 
@@ -35,38 +39,89 @@ export const authService = {
    */
   async signUp(data: SignUpData): Promise<AuthResponse> {
     try {
-      const response = await api.post('/usuario/cadastro', data);
-      // backend returns { token, id }
-      return response.data as AuthResponse;
+      const response = await api.post('/usuario/cadastro', {
+        nome: data.nome,
+        email: data.email,
+        senha: data.senha,
+      });
+
+      // Backend sends result.desc as response body directly
+      const { token, id } = response.data;
+
+      // Fetch user info to get nome, email, and tipoAssinatura
+      const infoResponse = await api.get('/usuario/info', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const userInfo = infoResponse.data;
+
+      return {
+        token,
+        id: String(id),
+        nome: userInfo.nome,
+        email: userInfo.email,
+        tipoAssinatura: userInfo.tipoAssinatura,
+        role: userInfo.tipoAssinatura?.toLowerCase() === 'admin' ? 'admin' : 'user',
+      };
     } catch (error: any) {
-      const message = error?.response?.data?.erro || 'Erro ao realizar cadastro';
-      throw { status: error?.response?.status ?? 500, message } as ApiError;
+      console.error('SignUp error:', error);
+      console.error('Response data:', error.response?.data);
+
+      // Backend sends errors directly in response.data.erro
+      if (error.response?.data?.erro) {
+        throw new Error(error.response.data.erro);
+      } else if (error.response?.status === 409) {
+        throw new Error('Este e-mail já está cadastrado.');
+      } else if (error.message === 'Network Error') {
+        throw new Error('Erro de conexão. Verifique sua internet.');
+      } else {
+        throw new Error('Erro ao realizar cadastro. Tente novamente.');
+      }
     }
   },
 
-  /**
-   * Real login against backend: POST /usuario/login
-   */
   async login(data: LoginData): Promise<AuthResponse> {
     try {
-      const response = await api.post('/usuario/login', data);
-      const auth = response.data as AuthResponse;
+      const response = await api.post('/usuario/login', {
+        email: data.email,
+        senha: data.senha,
+      });
 
-      // Definição simples de admin: email específico
-      if (!auth.role) {
-        auth.role = data.email === 'admin@domoteasy.com' ? 'admin' : 'user';
-      }
+      // Backend sends result.desc as response body directly
+      const { token, id } = response.data;
 
-      return auth;
+      // Fetch user info to get nome, email, and tipoAssinatura
+      const infoResponse = await api.get('/usuario/info', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const userInfo = infoResponse.data;
+
+      return {
+        token,
+        id: String(id),
+        nome: userInfo.nome,
+        email: userInfo.email,
+        tipoAssinatura: userInfo.tipoAssinatura,
+        role: userInfo.tipoAssinatura?.toLowerCase() === 'admin' ? 'admin' : 'user',
+      };
     } catch (error: any) {
-      const message = error?.response?.data?.erro || 'Erro ao fazer login';
-      throw { status: error?.response?.status ?? 500, message } as ApiError;
+      console.error('Login error:', error);
+      console.error('Response data:', error.response?.data);
+
+      // Backend sends errors directly in response.data.erro
+      if (error.response?.data?.erro) {
+        throw new Error(error.response.data.erro);
+      } else if (error.response?.status === 401) {
+        throw new Error('Email ou senha inválidos.');
+      } else if (error.message === 'Network Error') {
+        throw new Error('Erro de conexão. Verifique sua internet.');
+      } else {
+        throw new Error('Erro ao fazer login. Tente novamente.');
+      }
     }
   },
 
-  /**
-   * Update password via PATCH /usuario/atualizar
-   */
   async updateProfile(data: UpdateProfileData): Promise<{ message: string }> {
     try {
       await api.patch('/usuario/atualizar', data);
@@ -83,11 +138,13 @@ export const authService = {
   async getUserName(): Promise<string> {
     try {
       const response = await api.get('/usuario/nome');
-      // backend e-usuario.obterNome returns { nome: string }
-      return response.data?.nome ?? '';
+      // Backend sends result.desc as response body directly
+      return response.data.nome;
     } catch (error: any) {
-      const message = error?.response?.data?.erro || 'Erro ao buscar nome do usuário';
-      throw { status: error?.response?.status ?? 500, message } as ApiError;
+      if (error.message === 'Network Error') {
+        throw new Error('Erro de conexão. Verifique sua internet.');
+      }
+      throw new Error('Erro ao buscar nome do usuário.');
     }
   },
 
@@ -124,10 +181,20 @@ export const authService = {
     return role as 'user' | 'admin' | 'technician' | null;
   },
 
+  async saveSubscriptionStatus(status: 'free' | 'premium'): Promise<void> {
+    await AsyncStorage.setItem('subscriptionStatus', status);
+  },
+
+  async getSubscriptionStatus(): Promise<'free' | 'premium'> {
+    const status = await AsyncStorage.getItem('subscriptionStatus');
+    return (status as 'free' | 'premium') || 'free';
+  },
+
   async logout(): Promise<void> {
     await AsyncStorage.removeItem('authToken');
     await AsyncStorage.removeItem('userName');
     await AsyncStorage.removeItem('userRole');
     await AsyncStorage.removeItem('userId');
+    await AsyncStorage.removeItem('subscriptionStatus');
   },
 };

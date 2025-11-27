@@ -16,7 +16,7 @@ export const useSignIn = () => {
     const [showSuccess, setShowSuccess] = useState(false);
 
     // Acessa o contexto de autenticação
-    const { setUserName, setUserRole, setUserId } = useAuth();
+    const { setUserName, setUserRole, setUserId, updateSubscriptionStatus } = useAuth();
 
     // Handlers
     const handleInputChange = (field: keyof LoginData, value: string) => {
@@ -54,25 +54,27 @@ export const useSignIn = () => {
             const response = await authService.login(formData);
             await authService.saveToken(response.token);
 
-            // Salvar e definir o role do usuário (mock)
+            // Salvar e definir o role do usuário
             if (response.role) {
                 await authService.saveUserRole(response.role);
                 setUserRole(response.role);
             }
 
             // Salvar e definir o ID do usuário
-            if (response.id) {
-                await authService.saveUserId(response.id);
-                setUserId(response.id);
+            await authService.saveUserId(response.id);
+            setUserId(response.id);
+
+            // Salvar nome do usuário (agora vem do response)
+            if (response.nome) {
+                await authService.saveUserName(response.nome);
+                setUserName(response.nome);
             }
 
-            // Busca o nome do usuário após login bem-sucedido
-            try {
-                const userName = await authService.getUserName();
-                await authService.saveUserName(userName);
-                setUserName(userName);
-            } catch (err) {
-                console.error('Erro ao buscar nome do usuário:', err);
+            // Salvar e atualizar subscription status
+            if (response.tipoAssinatura) {
+                const subscriptionStatus = response.tipoAssinatura.toLowerCase().includes('premium') ? 'premium' : 'free';
+                await authService.saveSubscriptionStatus(subscriptionStatus);
+                await updateSubscriptionStatus(subscriptionStatus);
             }
 
             // Lógica de "Permanecer conectado" poderia ser salva aqui também
