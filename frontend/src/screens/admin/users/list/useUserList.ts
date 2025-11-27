@@ -44,7 +44,7 @@ export const useUserList = () => {
     };
 
     const handleUserPress = (id: string) => {
-        router.push({ pathname: '/admin/users/[id]', params: { id } });
+        router.push({ pathname: '/FORM-GESTAO/users/[id]', params: { id } });
     };
 
     return {

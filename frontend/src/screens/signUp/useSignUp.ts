@@ -102,7 +102,7 @@ export const useSignUp = () => {
     const handleNavigateToSignIn = () => {
         // Se já tem conta, vai para login.
         // Se veio do login, talvez 'back' seja melhor, mas o replace garante fluxo limpo.
-        router.navigate('/signIn');
+        router.navigate('/FORM-LOGIN');
     };
 
     const handleNavigateBack = () => {

@@ -97,7 +97,7 @@ export const useSignIn = () => {
     };
 
     const handleNavigateToSignUp = () => {
-        router.push('./signUp');
+        router.push('./FORM-CADASTRO');
     };
 
     const handleNavigateBack = () => {

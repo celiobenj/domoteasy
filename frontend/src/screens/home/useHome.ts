@@ -52,7 +52,7 @@ export const useHome = () => {
     }, []);
 
     const handleNavigateToProfile = () => {
-        router.push('/profile');
+        router.push('/FORM-PERFIL');
     };
 
     const handleLogout = async () => {
@@ -62,19 +62,19 @@ export const useHome = () => {
     };
 
     const handleNavigateToCreateProject = () => {
-        router.push('/project/create');
+        router.push('/FORM-PROJETO');
     };
 
     const handleNavigateToTechnicians = () => {
-        router.push('/technicians/list');
+        router.push('/FORM-CONTATO');
     };
 
     const handleNavigateToProject = (projectId: string) => {
-        router.push(`/project/budget?projectId=${projectId}`);
+        router.push(`/FORM-ORCAMENTO?projectId=${projectId}`);
     };
 
     const handleNavigateToAdmin = () => {
-        router.push('/admin');
+        router.push('/FORM-GESTAO');
     };
 
     return {

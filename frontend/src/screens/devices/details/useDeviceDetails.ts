@@ -32,7 +32,7 @@ export const useDeviceDetails = () => {
     const handleViewManual = () => {
         if (subscriptionStatus === 'premium') {
             // Premium user: navigate to manual
-            router.push(`/devices/manual?id=${id}`);
+            router.push(`/FORM-MANUAIS?id=${id}`);
         } else {
             // Free user: show upgrade alert
             Alert.alert(

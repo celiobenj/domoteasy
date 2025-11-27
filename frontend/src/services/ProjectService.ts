@@ -35,7 +35,7 @@ export interface Item extends Device {
 const MOCK_PROJECTS: Project[] = [];
 
 // Mock Device Data (no longer used for recommendations)
-const MOCK_DEVICES: Device[] = [];
+const MOCK_DEVICES: Device[] = [
     {
         id: '1',
         name: 'Lâmpada Inteligente',

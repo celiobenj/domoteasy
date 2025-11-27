@@ -7,17 +7,17 @@ export const useDashboard = () => {
 
     const handleNavigateToUsers = () => {
         // Placeholder: Navigate to user management
-        router.push('/admin/users');
+        router.push('/FORM-GESTAO/users');
     };
 
     const handleNavigateToDevices = () => {
         // Placeholder: Navigate to devices management
-        router.push('/admin/devices');
+        router.push('/FORM-GESTAO/devices');
     };
 
     const handleNavigateToTechnicians = () => {
         // Placeholder: Navigate to technicians approval
-        router.push('/admin/technicians');
+        router.push('/FORM-GESTAO/technicians');
     };
 
     return {

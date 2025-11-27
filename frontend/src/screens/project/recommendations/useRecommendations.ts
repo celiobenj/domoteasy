@@ -78,7 +78,7 @@ export const useRecommendations = () => {
         }
 
         router.push({
-            pathname: '/project/budget',
+            pathname: '/FORM-ORCAMENTO',
             params: {
                 items: JSON.stringify(selectedItems),
                 projectId

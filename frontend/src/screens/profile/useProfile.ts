@@ -10,19 +10,19 @@ export const useProfile = () => {
     };
 
     const handleEditProfile = () => {
-        router.push('/editProfile');
+        router.push('/FORM-GER.PERFIL');
     };
 
     const handleUpgrade = () => {
         if (subscriptionStatus === 'premium') {
-            router.push('/subscription/manage');
+            router.push('/FORM-ASSINATURA');
         } else {
             router.push('/subscription/plans');
         }
     };
 
     const handleNavigateToAdmin = () => {
-        router.push('./admin');
+        router.push('./FORM-GESTAO');
     };
 
     const handleLogout = async () => {
