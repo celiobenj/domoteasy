@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import api from './api';
+
 
 export interface SignUpData {
   nome: string;
@@ -20,6 +20,7 @@ export interface UpdateProfileData {
 export interface AuthResponse {
   token: string;
   id?: string;
+  role?: 'user' | 'admin' | 'technician';
   erro?: string;
 }
 
@@ -30,72 +31,40 @@ export interface ApiError {
 
 export const authService = {
   async signUp(data: SignUpData): Promise<AuthResponse> {
-    try {
-      const response = await api.post('/usuario/cadastro', data);
-      return response.data as AuthResponse;
-    } catch (err: any) {
-      if (err.response) {
-        const status = err.response.status;
-        const result = err.response.data || {};
-        if (status === 409) {
-          throw {
-            status: 409,
-            message: 'Este email já está cadastrado'
-          } as ApiError;
-        }
-        throw {
-          status,
-          message: result.erro || 'Erro ao fazer cadastro'
-        } as ApiError;
-      }
-      throw { status: 0, message: 'Erro de conexão' } as ApiError;
-    }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Mock success response
+    return {
+      token: 'mock-jwt-token',
+      id: '1', // Mock ID consistent with TechnicianService
+      role: 'user',
+    };
   },
 
   async login(data: LoginData): Promise<AuthResponse> {
-    try {
-      const response = await api.post('/usuario/login', data);
-      return response.data as AuthResponse;
-    } catch (err: any) {
-      if (err.response) {
-        const status = err.response.status;
-        const result = err.response.data || {};
-        if (status === 401) {
-          throw { status: 401, message: 'Email ou senha inválidos' } as ApiError;
-        }
-        throw { status, message: result.erro || 'Erro ao fazer login' } as ApiError;
-      }
-      throw { status: 0, message: 'Erro de conexão' } as ApiError;
-    }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Mock success response with admin role for testing
+    return {
+      token: 'mock-jwt-token',
+      id: '1', // Mock ID consistent with TechnicianService
+      role: 'admin',
+    };
   },
 
-  async updateProfile(data: UpdateProfileData): Promise<any> {
-    try {
-      const response = await api.patch('/usuario/atualizar', data);
-      return response.data;
-    } catch (err: any) {
-      if (err.response) {
-        const status = err.response.status;
-        const result = err.response.data || {};
-        if (status === 401) {
-          throw { status: 401, message: 'Senha atual inválida' } as ApiError;
-        }
-        if (status === 400) {
-          throw { status: 400, message: result.erro || 'Dados inválidos' } as ApiError;
-        }
-        throw { status, message: result.erro || 'Erro ao atualizar perfil' } as ApiError;
-      }
-      throw { status: 0, message: 'Erro de conexão' } as ApiError;
-    }
+  async updateProfile(data: UpdateProfileData): Promise<{ message: string }> {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    return { message: 'Perfil atualizado com sucesso' };
   },
 
   async getUserName(): Promise<string> {
-    try {
-      const response = await api.get('/usuario/nome');
-      return response.data.nome;
-    } catch (err: any) {
-      throw { status: 0, message: 'Erro ao obter nome do usuário' } as ApiError;
-    }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    return 'Usuário Mock';
   },
 
   async saveToken(token: string): Promise<void> {
@@ -114,8 +83,27 @@ export const authService = {
     return await AsyncStorage.getItem('userName');
   },
 
+  async saveUserId(id: string): Promise<void> {
+    await AsyncStorage.setItem('userId', id);
+  },
+
+  async getUserId(): Promise<string | null> {
+    return await AsyncStorage.getItem('userId');
+  },
+
+  async saveUserRole(role: 'user' | 'admin' | 'technician'): Promise<void> {
+    await AsyncStorage.setItem('userRole', role);
+  },
+
+  async getUserRole(): Promise<'user' | 'admin' | 'technician' | null> {
+    const role = await AsyncStorage.getItem('userRole');
+    return role as 'user' | 'admin' | 'technician' | null;
+  },
+
   async logout(): Promise<void> {
     await AsyncStorage.removeItem('authToken');
     await AsyncStorage.removeItem('userName');
+    await AsyncStorage.removeItem('userRole');
+    await AsyncStorage.removeItem('userId');
   },
 };

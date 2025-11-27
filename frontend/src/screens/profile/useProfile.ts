@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/services/authService';
 
 export const useProfile = () => {
-    const { userName, clearUserName, subscriptionStatus } = useAuth();
+    const { userName, clearUserName, subscriptionStatus, isAdmin } = useAuth();
 
     const handleGoBack = () => {
         router.back();
@@ -21,6 +21,10 @@ export const useProfile = () => {
         }
     };
 
+    const handleNavigateToAdmin = () => {
+        router.push('./admin');
+    };
+
     const handleLogout = async () => {
         await authService.logout();
         clearUserName();
@@ -30,9 +34,11 @@ export const useProfile = () => {
     return {
         userName,
         subscriptionStatus,
+        isAdmin,
         handleGoBack,
         handleEditProfile,
         handleUpgrade,
+        handleNavigateToAdmin,
         handleLogout,
     };
 };

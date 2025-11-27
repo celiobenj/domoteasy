@@ -12,6 +12,18 @@ export interface DeviceDetail {
     }[];
 }
 
+// Admin CMS Device Interface
+export interface Device {
+    id: string;
+    name: string;
+    brand: string;
+    price: number;
+    image?: string;
+    purchaseLink?: string;
+    videoUrl?: string;
+    pdfUrl?: string;
+}
+
 export interface DeviceManual {
     id: string;
     content: string;
@@ -142,6 +154,43 @@ const MOCK_MANUALS: { [key: string]: DeviceManual } = {
     },
 };
 
+// Mock admin devices data (separate from detailed devices for user view)
+const MOCK_ADMIN_DEVICES: Device[] = [
+    {
+        id: '1',
+        name: 'Lâmpada Inteligente',
+        brand: 'Philips Hue',
+        price: 150.00,
+        purchaseLink: 'https://example.com/lampada',
+        videoUrl: 'https://www.youtube.com/watch?v=example',
+    },
+    {
+        id: '2',
+        name: 'Tomada Inteligente',
+        brand: 'Positivo',
+        price: 80.00,
+        purchaseLink: 'https://example.com/tomada',
+        pdfUrl: '/manuals/tomada-positivo.pdf',
+    },
+    {
+        id: '3',
+        name: 'Assistente Virtual',
+        brand: 'Amazon Echo Dot',
+        price: 350.00,
+        purchaseLink: 'https://example.com/echo',
+    },
+    {
+        id: '4',
+        name: 'Câmera de Segurança',
+        brand: 'Intelbras',
+        price: 250.00,
+        purchaseLink: 'https://example.com/camera',
+    },
+];
+
+// In-memory storage to simulate persistence during the session
+let adminDevicesData = [...MOCK_ADMIN_DEVICES];
+
 export const DeviceService = {
     async getDeviceById(id: string): Promise<DeviceDetail | null> {
         // Simulate API delay
@@ -163,5 +212,106 @@ export const DeviceService = {
         await new Promise(resolve => setTimeout(resolve, 400));
 
         return MOCK_DEVICES;
+    },
+
+    // ===== ADMIN CMS Methods =====
+
+    /**
+     * Get all devices for admin CMS
+     * @returns Promise with array of devices
+     */
+    async getAdminDevices(): Promise<Device[]> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 600));
+        return adminDevicesData;
+    },
+
+    /**
+     * Get a device by ID for admin CMS
+     * @param id Device ID
+     * @returns Promise with device or null
+     */
+    async getById(id: number): Promise<Device | null> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const device = adminDevicesData.find(d => d.id === id.toString());
+        return device || null;
+    },
+
+    /**
+     * Update a device
+     * @param id Device ID
+     * @param data Device data
+     */
+    async update(id: number, data: Omit<Device, 'id'>): Promise<void> {
+        console.log("Mock Update:", data);
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        const deviceIndex = adminDevicesData.findIndex(device => device.id === id.toString());
+        if (deviceIndex !== -1) {
+            adminDevicesData[deviceIndex] = {
+                ...adminDevicesData[deviceIndex],
+                ...data,
+            };
+        }
+    },
+
+    /**
+     * Create a new device
+     * @param data Device data without ID
+     * @returns Promise with created device
+     */
+    async createDevice(data: Omit<Device, 'id'>): Promise<Device> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        // Generate pseudo-ID
+        const newId = (adminDevicesData.length + 1).toString();
+        const newDevice: Device = {
+            id: newId,
+            ...data,
+        };
+
+        adminDevicesData.push(newDevice);
+        return newDevice;
+    },
+
+    /**
+     * Update an existing device
+     * @param id Device ID
+     * @param data Partial device data to update
+     * @returns Promise with updated device or undefined if not found
+     */
+    async updateDevice(id: string, data: Partial<Device>): Promise<Device | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        const deviceIndex = adminDevicesData.findIndex(device => device.id === id);
+        if (deviceIndex === -1) {
+            return undefined;
+        }
+
+        adminDevicesData[deviceIndex] = {
+            ...adminDevicesData[deviceIndex],
+            ...data,
+        };
+
+        return adminDevicesData[deviceIndex];
+    },
+
+    /**
+     * Delete a device by ID
+     * @param id Device ID
+     * @returns Promise with boolean indicating success
+     */
+    async deleteDevice(id: string): Promise<boolean> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 600));
+
+        const initialLength = adminDevicesData.length;
+        adminDevicesData = adminDevicesData.filter(device => device.id !== id);
+
+        return adminDevicesData.length < initialLength;
     }
 };

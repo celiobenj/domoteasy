@@ -4,18 +4,19 @@ import { AuthProvider } from '@/contexts/AuthContext';
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="welcome" options={{ headerShown: false }} />
-        <Stack.Screen name="signIn" options={{ headerShown: false }} />
-        <Stack.Screen name="signUp" options={{ headerShown: false }} />
-        <Stack.Screen name="home" options={{ headerShown: false }} />
-        <Stack.Screen name="editProfile" options={{ headerShown: false }} />
-        <Stack.Screen name="project" options={{ headerShown: false }} />
-        <Stack.Screen name="profile" options={{ headerShown: false }} />
-        <Stack.Screen name="technicians" options={{ headerShown: false }} />
-        <Stack.Screen name="subscription" options={{ headerShown: false }} />
-        <Stack.Screen name="devices" options={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="welcome" />
+        <Stack.Screen name="signIn" />
+        <Stack.Screen name="signUp" />
+        <Stack.Screen name="home" />
+        <Stack.Screen name="editProfile" />
+        <Stack.Screen name="project" />
+        <Stack.Screen name="profile" />
+        <Stack.Screen name="technicians" />
+        <Stack.Screen name="subscription" />
+        <Stack.Screen name="devices" />
+        <Stack.Screen name="admin" />
       </Stack>
     </AuthProvider>
   );

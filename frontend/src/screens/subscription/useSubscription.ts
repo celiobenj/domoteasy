@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import { Alert } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
-import { SubscriptionService, Plan, PLANS } from '@/services/SubscriptionService';
+import { SubscriptionService, Plan } from '@/services/SubscriptionService';
 
 export const useSubscription = () => {
     const { subscriptionStatus, updateSubscriptionStatus } = useAuth();
+    const [plans, setPlans] = useState<Plan[]>([]);
+    const [loadingPlans, setLoadingPlans] = useState(true);
     const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
     const [loading, setLoading] = useState(false);
     const [cardNumber, setCardNumber] = useState('');
@@ -13,6 +15,23 @@ export const useSubscription = () => {
     const [cardExpiry, setCardExpiry] = useState('');
     const [cardCvv, setCardCvv] = useState('');
     const [showSuccess, setShowSuccess] = useState(false);
+
+    useEffect(() => {
+        loadPlans();
+    }, []);
+
+    const loadPlans = async () => {
+        try {
+            setLoadingPlans(true);
+            const fetchedPlans = await SubscriptionService.getPlans();
+            setPlans(fetchedPlans);
+        } catch (error) {
+            console.error('Failed to load plans:', error);
+            Alert.alert('Erro', 'Não foi possível carregar os planos.');
+        } finally {
+            setLoadingPlans(false);
+        }
+    };
 
     const handleSelectPlan = (plan: Plan) => {
         setSelectedPlan(plan);
@@ -70,7 +89,8 @@ export const useSubscription = () => {
     };
 
     return {
-        plans: PLANS,
+        plans,
+        loadingPlans,
         selectedPlan,
         loading,
         subscriptionStatus,

@@ -7,6 +7,7 @@ export interface Technician {
     phone: string;
     description: string;
     avatar?: string;
+    status: 'pending' | 'active' | 'rejected' | 'inactive';
 }
 
 const MOCK_TECHNICIANS: Technician[] = [
@@ -18,6 +19,7 @@ const MOCK_TECHNICIANS: Technician[] = [
         email: 'joao.silva@email.com',
         phone: '(11) 99999-1111',
         description: 'Especialista em instalações residenciais e automação.',
+        status: 'active',
     },
     {
         id: '2',
@@ -27,6 +29,7 @@ const MOCK_TECHNICIANS: Technician[] = [
         email: 'maria.santos@email.com',
         phone: '(11) 99999-2222',
         description: 'Instalação de câmeras, alarmes e fechaduras digitais.',
+        status: 'active',
     },
     {
         id: '3',
@@ -36,6 +39,7 @@ const MOCK_TECHNICIANS: Technician[] = [
         email: 'carlos.oliveira@email.com',
         phone: '(11) 99999-3333',
         description: 'Configuração de hubs e assistentes virtuais.',
+        status: 'active',
     },
     {
         id: '4',
@@ -45,6 +49,7 @@ const MOCK_TECHNICIANS: Technician[] = [
         email: 'ana.pereira@email.com',
         phone: '(11) 99999-4444',
         description: 'Manutenção e reparos elétricos.',
+        status: 'active',
     },
     {
         id: '5',
@@ -54,19 +59,148 @@ const MOCK_TECHNICIANS: Technician[] = [
         email: 'pedro.costa@email.com',
         phone: '(11) 99999-5555',
         description: 'Otimização de Wi-Fi e redes domésticas.',
+        status: 'active',
+    },
+    {
+        id: '6',
+        name: 'Roberto Alves',
+        specialty: 'Eletricista',
+        rating: 0,
+        email: 'roberto.alves@email.com',
+        phone: '(11) 99999-6666',
+        description: 'Instalações elétricas residenciais e comerciais.',
+        status: 'pending',
+    },
+    {
+        id: '7',
+        name: 'Juliana Campos',
+        specialty: 'Técnica em Automação',
+        rating: 0,
+        email: 'juliana.campos@email.com',
+        phone: '(11) 99999-7777',
+        description: 'Especialista em automação residencial completa.',
+        status: 'pending',
+    },
+    {
+        id: '8',
+        name: 'Fernando Lima',
+        specialty: 'Integrador de Sistemas',
+        rating: 0,
+        email: 'fernando.lima@email.com',
+        phone: '(11) 99999-8888',
+        description: 'Integração de sistemas de segurança e automação.',
+        status: 'pending',
     },
 ];
+
+// In-memory storage to simulate persistence during the session
+let techniciansData = [...MOCK_TECHNICIANS];
 
 export const TechnicianService = {
     async getAll(): Promise<Technician[]> {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 800));
-        return MOCK_TECHNICIANS;
+        return techniciansData;
     },
 
     async getById(id: string): Promise<Technician | undefined> {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 500));
-        return MOCK_TECHNICIANS.find(t => t.id === id);
-    }
+        return techniciansData.find(t => t.id === id);
+    },
+
+    async getPendingTechnicians(): Promise<Technician[]> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        return techniciansData.filter(t => t.status === 'pending');
+    },
+
+    async approve(id: string): Promise<Technician | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const technicianIndex = techniciansData.findIndex(t => t.id === id);
+        if (technicianIndex === -1) return undefined;
+
+        techniciansData[technicianIndex] = {
+            ...techniciansData[technicianIndex],
+            status: 'active',
+        };
+
+        return techniciansData[technicianIndex];
+    },
+
+    async reject(id: string): Promise<Technician | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const technicianIndex = techniciansData.findIndex(t => t.id === id);
+        if (technicianIndex === -1) return undefined;
+
+        techniciansData[technicianIndex] = {
+            ...techniciansData[technicianIndex],
+            status: 'rejected',
+        };
+
+        return techniciansData[technicianIndex];
+    },
+
+    async deactivate(id: string): Promise<Technician | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const technicianIndex = techniciansData.findIndex(t => t.id === id);
+        if (technicianIndex === -1) return undefined;
+
+        techniciansData[technicianIndex] = {
+            ...techniciansData[technicianIndex],
+            status: 'inactive',
+        };
+
+        return techniciansData[technicianIndex];
+    },
+
+    async reactivate(id: string): Promise<Technician | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const technicianIndex = techniciansData.findIndex(t => t.id === id);
+        if (technicianIndex === -1) return undefined;
+
+        techniciansData[technicianIndex] = {
+            ...techniciansData[technicianIndex],
+            status: 'active',
+        };
+
+        return techniciansData[technicianIndex];
+    },
+
+    async updateTechnicianData(
+        id: string,
+        data: Partial<Technician>
+    ): Promise<Technician | undefined> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const technicianIndex = techniciansData.findIndex(t => t.id === id);
+        if (technicianIndex === -1) {
+            return undefined;
+        }
+
+        techniciansData[technicianIndex] = {
+            ...techniciansData[technicianIndex],
+            ...data,
+        };
+
+        return techniciansData[technicianIndex];
+    },
+    async delete(id: string): Promise<boolean> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const initialLength = techniciansData.length;
+        techniciansData = techniciansData.filter(t => t.id !== id);
+
+        return techniciansData.length < initialLength;
+    },
 };

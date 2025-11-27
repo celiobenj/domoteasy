@@ -9,7 +9,7 @@ export interface Plan {
     recommended?: boolean;
 }
 
-export const PLANS: Plan[] = [
+const PLANS: Plan[] = [
     {
         id: 'monthly',
         name: 'Premium Mensal',
@@ -35,6 +35,12 @@ export const PLANS: Plan[] = [
 ];
 
 export const SubscriptionService = {
+    async getPlans(): Promise<Plan[]> {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        return PLANS;
+    },
+
     async subscribe(planId: string, paymentData: any): Promise<void> {
         // Simula uma chamada de API para processar o pagamento e assinar
         return new Promise((resolve) => {
@@ -57,6 +63,7 @@ export const SubscriptionService = {
 
     async getSubscriptionStatus(): Promise<string> {
         // Simula verificação de status
+        await new Promise(resolve => setTimeout(resolve, 500));
         return 'free';
     }
 };
