@@ -81,15 +81,10 @@ export const UserService = {
                 patch.tipoAssinatura = data.subscriptionType === 'premium' ? 'Premium' : 'Comum';
             }
 
-            // Backend expects /usuario/atualizar for self update, or /admin/usuarios/:id for admin update
-            // Assuming this service is used by Admin mostly based on context, but let's check
-            // The user request says: `updateProfile`: Call `api.put('/usuario/' + id, data)`. Map frontend fields (`name`) to backend (`nome`).
-            // However, the backend route seems to be PATCH /usuario/atualizar (self) or PATCH /admin/usuarios/:id (admin)
-            // I will follow the user instruction for `updateProfile` in `UserService.ts`.
+            // Backend admin endpoint: PATCH /admin/usuarios/:idUsuario
+            await api.patch(`/admin/usuarios/${id}`, patch);
 
-            await api.put('/usuario/' + id, patch);
-
-            // Recarrega usuário para refletir mudanças
+            // Reload user to reflect changes
             return this.getUserById(id);
         } catch (error) {
             console.error('Erro ao atualizar usuário admin:', error);
