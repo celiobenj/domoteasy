@@ -103,8 +103,8 @@ export const DeviceService = {
     async getDeviceManual(id: string): Promise<DeviceManual | null> {
         try {
             const response = await api.get(`/conteudo/manual/${id}`);
-            // Backend returns { desc: { id, content, videoUrl, pdfUrl } }
-            const manualData = response.data?.desc;
+            // Backend sends the manual object directly in response.data
+            const manualData = response.data;
 
             if (!manualData) return null;
 
@@ -126,8 +126,8 @@ export const DeviceService = {
     async getAllDevices(): Promise<DeviceDetail[]> {
         try {
             const response = await api.get('/conteudo/dispositivos');
-            // Backend returns data in response.data.desc (array)
-            const backendDevices = response.data?.desc || [];
+            // Backend sends array directly in response.data (not nested in desc)
+            const backendDevices = Array.isArray(response.data) ? response.data : [];
 
             // Map each backend device to frontend format
             return backendDevices.map(adaptBackendDevice);
@@ -147,7 +147,8 @@ export const DeviceService = {
     async getAdminDevices(): Promise<Device[]> {
         try {
             const response = await api.get('/conteudo/dispositivos');
-            const backendDevices = response.data?.desc || [];
+            // Backend sends array directly in response.data (not nested in desc)
+            const backendDevices = Array.isArray(response.data) ? response.data : [];
 
             // Map each backend device to admin format
             return backendDevices.map(adaptBackendDeviceAdmin);
@@ -207,9 +208,9 @@ export const DeviceService = {
                 throw new Error(`Unexpected status code: ${response.status}`);
             }
 
-            // Return the created device with the ID from backend
+            // Backend sends { mensagem, id } directly in response.data
             const createdDevice: Device = {
-                id: String(response.data?.desc?.id || Date.now()),
+                id: String(response.data?.id || Date.now()),
                 ...data,
             };
 

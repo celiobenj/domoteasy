@@ -43,8 +43,8 @@ export const TechnicianService = {
     async getAll(): Promise<Technician[]> {
         try {
             const response = await api.get('/tecnicos');
-            // Backend returns data in response.data.desc (array)
-            const backendTechnicians = response.data?.desc || [];
+            // Backend sends array directly in response.data (not nested in desc)
+            const backendTechnicians = Array.isArray(response.data) ? response.data : [];
 
             // Map each backend technician to frontend format
             return backendTechnicians.map(adaptBackendTechnician);

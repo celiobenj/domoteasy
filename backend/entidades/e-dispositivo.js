@@ -17,7 +17,7 @@ class Dispositivo {
                     [idDisp, dadosManual.descricao, dadosManual.linkVideo]
                 );
             }
-            return { status: 201, desc: { mensagem: "Conteúdo criado com sucesso." } };
+            return { status: 201, desc: { mensagem: "Conteúdo criado com sucesso.", id: idDisp } };
         } catch (error) {
             return { status: 500, desc: { erro: "Erro ao criar conteúdo." } };
         }

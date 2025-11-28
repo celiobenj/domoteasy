@@ -55,8 +55,8 @@ export const SubscriptionService = {
     async getPlans(): Promise<Plan[]> {
         try {
             const response = await api.get('/planos');
-            // Backend returns data in response.data.desc (array)
-            const backendPlans = response.data?.desc || [];
+            // Backend sends array directly in response.data (not nested in desc)
+            const backendPlans = Array.isArray(response.data) ? response.data : [];
 
             // Map each backend plan to frontend format
             return backendPlans.map(adaptBackendPlan);
