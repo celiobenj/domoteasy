@@ -127,5 +127,28 @@ export const ProjectService = {
             console.error('Erro ao listar projetos do usuário:', error);
             return [];
         }
+    },
+
+    async getProjectWithItems(projectId: string): Promise<Item[]> {
+        try {
+            const response = await api.get(`/projetos/${projectId}`);
+            const data = response.data as { projeto: any; itens: any[] };
+
+            // Mapeia os itens do backend para o formato do frontend
+            return data.itens.map((item) => ({
+                id: String(item.id),
+                name: item.nome,
+                brand: item.marca || 'N/A',
+                price: item.preco,
+                category: 'Automação', // Categoria padrão, pode ser expandido no futuro
+                description: item.descricao || '',
+                specs: [], // Pode ser expandido para incluir especificações
+                purchaseLink: item.linkCompra || '',
+                selected: true, // Itens do projeto são pré-selecionados
+            }));
+        } catch (error) {
+            console.error('Erro ao buscar itens do projeto:', error);
+            return [];
+        }
     }
 };

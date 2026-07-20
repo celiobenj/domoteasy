@@ -4,6 +4,7 @@ export const colors = {
   primary: '#4A4E69',
   background: '#F2E9E4',
   text: '#4A4E69',
+  textSecondary: '#9A9DAD',
   onPrimary: '#F2E9E4',
   success: '#4CAF50',
   error: '#F44336',
@@ -24,7 +25,7 @@ export const typography = {
   fontFamily: {
     regular: 'Roboto_400Regular',
     bold: 'Roboto_700Bold',
-    heading: 'Arvo_400Regular', 
+    heading: 'Arvo_400Regular',
   },
   fontSize: {
     xsmall: 12,    // errorText

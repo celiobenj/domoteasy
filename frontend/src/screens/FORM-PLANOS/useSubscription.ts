@@ -39,7 +39,8 @@ export const useSubscription = () => {
 
     const handleProceedToPayment = () => {
         if (selectedPlan) {
-            router.push('/FORM-ASSINATURA/PAGAMENTO');
+            // Passa o ID do plano via parâmetro na URL
+            router.push(`/FORM-ASSINATURA/PAGAMENTO?planId=${selectedPlan.id}&planName=${encodeURIComponent(selectedPlan.name)}`);
         } else {
             Alert.alert('Selecione um plano', 'Por favor, escolha um plano para continuar.');
         }

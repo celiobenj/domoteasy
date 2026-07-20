@@ -68,7 +68,22 @@ export const SubscriptionService = {
     },
 
     async subscribe(planId: string, paymentData: any): Promise<void> {
-        throw new Error("Feature not available on server");
+        try {
+            // Chama endpoint de pagamento simulado
+            const response = await api.post('/pagamentos/simular', {
+                idPlano: Number(planId)
+            });
+
+            if (response.status === 200) {
+                console.log('✅ Pagamento simulado aprovado:', response.data);
+                return;
+            }
+
+            throw new Error('Falha no pagamento simulado');
+        } catch (error: any) {
+            console.error('Erro no pagamento simulado:', error);
+            throw new Error(error.response?.data?.erro || 'Erro ao processar pagamento');
+        }
     },
 
     async cancelSubscription(): Promise<void> {

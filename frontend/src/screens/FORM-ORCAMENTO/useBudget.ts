@@ -6,17 +6,40 @@ import { ProjectService, Item } from '@/services/ProjectService';
 export const useBudget = () => {
     const { items: itemsParam, projectId } = useLocalSearchParams<{ items: string, projectId: string }>();
 
-    const items: Item[] = useMemo(() => {
-        try {
-            return itemsParam ? JSON.parse(itemsParam) : [];
-        } catch (e) {
-            console.error('Error parsing items:', e);
-            return [];
-        }
-    }, [itemsParam]);
-
+    const [items, setItems] = useState<Item[]>([]);
     const [loading, setLoading] = useState(false);
     const [total, setTotal] = useState(0);
+
+    // Load items from URL params or fetch from backend
+    useEffect(() => {
+        const loadItems = async () => {
+            // Se os itens foram passados via URL (fluxo de criação de projeto)
+            if (itemsParam) {
+                try {
+                    const parsedItems = JSON.parse(itemsParam);
+                    setItems(parsedItems);
+                } catch (e) {
+                    console.error('Error parsing items:', e);
+                    setItems([]);
+                }
+            }
+            // Se apenas projectId foi passado (clicou em projeto existente)
+            else if (projectId) {
+                try {
+                    setLoading(true);
+                    const projectItems = await ProjectService.getProjectWithItems(projectId);
+                    setItems(projectItems);
+                } catch (error) {
+                    console.error('Error loading project items:', error);
+                    setItems([]);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        loadItems();
+    }, [itemsParam, projectId]);
 
     // Fetch budget total from backend when items change
     useEffect(() => {

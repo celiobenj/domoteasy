@@ -8,4 +8,7 @@ const ctrl = new CtrlPagamento();
 // Geralmente pagamentos exigem autenticação para vincular ao user correto
 router.post('/', verificarToken, ctrl.processar);
 
+// Rota de pagamento simulado para DEMO/TESTE
+router.post('/simular', verificarToken, ctrl.simularPagamento);
+
 export default router;

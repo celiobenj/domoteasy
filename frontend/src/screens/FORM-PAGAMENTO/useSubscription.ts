@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react';
-import { router } from 'expo-router';
+import { useState } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Alert } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
-import { SubscriptionService, Plan } from '@/services/SubscriptionService';
+import { SubscriptionService } from '@/services/SubscriptionService';
 
 export const useSubscription = () => {
-    const { subscriptionStatus, updateSubscriptionStatus } = useAuth();
-    const [plans, setPlans] = useState<Plan[]>([]);
-    const [loadingPlans, setLoadingPlans] = useState(true);
-    const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+    const { updateSubscriptionStatus, loadUserData } = useAuth();
+    const { planId, planName } = useLocalSearchParams<{ planId: string; planName: string }>();
+
     const [loading, setLoading] = useState(false);
     const [cardNumber, setCardNumber] = useState('');
     const [cardName, setCardName] = useState('');
@@ -16,57 +15,31 @@ export const useSubscription = () => {
     const [cardCvv, setCardCvv] = useState('');
     const [showSuccess, setShowSuccess] = useState(false);
 
-    useEffect(() => {
-        loadPlans();
-    }, []);
-
-    const loadPlans = async () => {
-        try {
-            setLoadingPlans(true);
-            const fetchedPlans = await SubscriptionService.getPlans();
-            setPlans(fetchedPlans);
-        } catch (error) {
-            console.error('Failed to load plans:', error);
-            Alert.alert('Erro', 'Não foi possível carregar os planos.');
-        } finally {
-            setLoadingPlans(false);
-        }
-    };
-
-    const handleSelectPlan = (plan: Plan) => {
-        setSelectedPlan(plan);
-    };
-
-    const handleProceedToPayment = () => {
-        if (selectedPlan) {
-            router.push('/FORM-ASSINATURA/PAGAMENTO');
-        } else {
-            Alert.alert('Selecione um plano', 'Por favor, escolha um plano para continuar.');
-        }
-    };
-
     const handleSubscribe = async () => {
-        if (!selectedPlan) {
-            Alert.alert('Selecione um plano', 'Por favor, escolha um plano para continuar.');
+        if (!planId) {
+            Alert.alert('Erro', 'Plano não selecionado. Por favor, volte e selecione um plano.');
             return;
         }
 
         try {
             setLoading(true);
 
-            // Prepara dados de pagamento
-            const paymentData = {
+            // Simula delay de processamento (1-2 segundos)
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Chama backend para criar assinatura + pagamento simulado
+            await SubscriptionService.subscribe(planId, {
                 cardNumber,
                 cardName,
                 cardExpiry,
                 cardCvv,
-            };
-
-            // Chama backend para criar assinatura + pagamento
-            await SubscriptionService.subscribe(selectedPlan.id, paymentData);
+            });
 
             // Atualiza status local para Premium
             await updateSubscriptionStatus('premium');
+
+            // Recarrega dados do usuário para garantir sincronização
+            await loadUserData();
 
             // Show success notification
             setShowSuccess(true);
@@ -74,36 +47,22 @@ export const useSubscription = () => {
             // Redirect to home after delay
             setTimeout(() => {
                 router.replace('/FORM-HOME');
-            }, 1500);
-        } catch (error) {
-            Alert.alert('Erro', 'Falha ao processar pagamento. Tente novamente.');
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleCancelSubscription = async () => {
-        try {
-            setLoading(true);
-            await SubscriptionService.cancelSubscription();
-            await updateSubscriptionStatus('free');
-            Alert.alert('Cancelado', 'Sua assinatura foi cancelada.', [
-                { text: 'OK', onPress: () => router.back() }
-            ]);
-        } catch (error) {
-            Alert.alert('Erro', 'Falha ao cancelar assinatura.');
+            }, 2000);
+        } catch (error: any) {
+            console.error('Erro no pagamento:', error);
+            Alert.alert(
+                'Erro no Pagamento',
+                error.message || 'Falha ao processar pagamento. Tente novamente.'
+            );
         } finally {
             setLoading(false);
         }
     };
 
     return {
-        plans,
-        loadingPlans,
-        selectedPlan,
+        planId,
+        planName: planName ? decodeURIComponent(planName) : 'Plano',
         loading,
-        subscriptionStatus,
         cardNumber,
         setCardNumber,
         cardName,
@@ -114,9 +73,6 @@ export const useSubscription = () => {
         setCardCvv,
         showSuccess,
         setShowSuccess,
-        handleSelectPlan,
-        handleProceedToPayment,
         handleSubscribe,
-        handleCancelSubscription,
     };
 };

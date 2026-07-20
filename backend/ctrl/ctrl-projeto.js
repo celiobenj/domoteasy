@@ -3,7 +3,7 @@ import Projeto from '../entidades/e-projeto.js';
 class CtrlProjeto {
     async criar(req, res) {
         const idUsuario = req.usuario.id;
-        const { nome, descricao, preferencias, itens } = req.body; 
+        const { nome, descricao, preferencias, itens } = req.body;
         const projeto = new Projeto();
         const result = await projeto.criar(idUsuario, nome, descricao, preferencias, itens);
         res.status(result.status).json(result.desc);
@@ -20,6 +20,14 @@ class CtrlProjeto {
         const { idProjeto, itens } = req.body;
         const projeto = new Projeto();
         const result = await projeto.atualizarItens(idProjeto, itens);
+        res.status(result.status).json(result.desc);
+    }
+
+    async buscarPorId(req, res) {
+        const idUsuario = req.usuario.id;
+        const { id } = req.params;
+        const projeto = new Projeto();
+        const result = await projeto.buscarPorId(id, idUsuario);
         res.status(result.status).json(result.desc);
     }
 }

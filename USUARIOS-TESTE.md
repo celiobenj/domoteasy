@@ -37,7 +37,7 @@ Este arquivo contém todas as credenciais e informações dos dados de teste cri
 - **Email:** `user@domoteasy.com`
 - **Senha:** `User@123`
 - **Tipo de Assinatura:** Comum
-- **Descrição:** Usuário com plano básico
+- **Descrição:** Usuário comum sem assinatura premium
 - **Projetos:** Segurança Residencial
 
 ### 4. Usuária Sem Plano
@@ -131,20 +131,14 @@ Este arquivo contém todas as credenciais e informações dos dados de teste cri
 
 ## 💎 Planos de Assinatura
 
-### 1. Plano Básico
-- **ID:** 4000
-- **Valor:** R$ 29,90/mês
-- **Duração:** 30 dias
-- **Descrição:** Acesso a catálogo básico de dispositivos e suporte por email
-
-### 2. Plano Premium
+### 1. Plano Premium
 - **ID:** 4001
 - **Valor:** R$ 59,90/mês
 - **Duração:** 30 dias
 - **Descrição:** Acesso completo ao catálogo, projetos ilimitados e suporte prioritário
 - **Usuários ativos:** Maria Premium, Carlos Ferreira
 
-### 3. Plano Profissional
+### 2. Plano Profissional
 - **ID:** 4002
 - **Valor:** R$ 149,90/mês
 - **Duração:** 30 dias
@@ -222,7 +216,7 @@ node db/populate-test-data.js
 ✅ **5 técnicos** com diferentes status (ativo, pendente, reprovado, inativo)  
 ✅ **10 dispositivos** variados com preços realistas  
 ✅ **10 manuais** com descrições e links de vídeo  
-✅ **3 planos** de assinatura  
+✅ **2 planos** de assinatura (Premium e Profissional)  
 ✅ **2 assinaturas** ativas  
 ✅ **4 projetos** com diferentes complexidades  
 ✅ **20 itens** distribuídos entre os projetos  
@@ -237,6 +231,7 @@ node db/populate-test-data.js
 3. **Técnicos:** Não possuem senha pois não fazem login no sistema
 4. **Assinaturas:** Configuradas para expirar em 30 dias a partir da execução do script
 5. **Orçamentos:** Os valores foram calculados baseados na quantidade e preço dos dispositivos
+6. **Pagamento Simulado:** O sistema usa pagamento simulado para DEMO/TESTE. Ao clicar em "Confirmar Pagamento", a transação é aprovada automaticamente e o usuário recebe a assinatura Premium instantaneamente. Não é necessário inserir dados reais de cartão.
 
 ---
 

@@ -289,13 +289,6 @@ async function populateTestData() {
 
         const planos = [
             {
-                id: 4000,
-                nome: 'Básico',
-                valor: 29.90,
-                descricao: 'Acesso a catálogo básico de dispositivos e suporte por email',
-                duracaoDias: 30
-            },
-            {
                 id: 4001,
                 nome: 'Premium',
                 valor: 59.90,
